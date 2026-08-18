@@ -1,0 +1,6 @@
+Grade,Role_Level,Base_Salary_Min,Base_Salary_Max,Annual_Bonus_Percent,Stock_Options
+L1,Associate,45000,65000,5%,None
+L2,Mid-Level Specialist,70000,95000,10%,Eligible
+L3,Senior Specialist / Lead,100000,135000,15%,Eligible
+L4,Principal / Manager,140000,180000,20%,Standard Grant
+L5,Director / VP,190000,260000,25%,Executive Tier

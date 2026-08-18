@@ -1,0 +1,17 @@
+chromadb
+fastapi
+ollama
+pymupdf
+reportlab
+sentence-transformers
+uvicorn
+requests
+streamlit
+python-multipart
+pinecone
+groq
+pandas
+openpyxl
+python-docx
+pillow
+ocrmac

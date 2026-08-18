@@ -1,0 +1,282 @@
+INFO:     Will watch for changes in these directories: ['/Users/sydelwivelafonso/employee-policy-rag/app']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [8805] using WatchFiles
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 6442.00it/s]
+INFO:     Started server process [8810]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:52836 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52848 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52851 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52854 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52855 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52857 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52862 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52863 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52864 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52865 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52871 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52875 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52873 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52876 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52878 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52880 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52882 - "POST /ask HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/api/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8810]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 7702.69it/s]
+INFO:     Started server process [8858]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:52893 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52925 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52928 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52930 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52931 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52932 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52934 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52936 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52937 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52939 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52950 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52954 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52956 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52957 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52959 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52961 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52962 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52963 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52964 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52968 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52973 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52975 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 6482.50it/s]
+Storing data in vector store...
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+INFO:     127.0.0.1:52976 - "POST /documents/upload HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52981 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52986 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52988 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52995 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53001 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53002 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53003 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53006 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+INFO:     127.0.0.1:53010 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 11383.75it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12471.16it/s]
+Storing data in vector store...
+Storing data in vector store...
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+INFO:     127.0.0.1:53008 - "POST /documents/upload HTTP/1.1" 200 OK
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+INFO:     127.0.0.1:53011 - "POST /documents/upload HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53017 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53027 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53029 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53035 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53038 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53068 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53070 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53080 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56532 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57387 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57408 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57412 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57414 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57415 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57418 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57472 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57474 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57483 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57485 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57487 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57489 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57491 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57493 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57495 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57497 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57499 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57501 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57503 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57505 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57507 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57509 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57522 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57524 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57527 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57529 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57538 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57541 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57546 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57548 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57551 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57553 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57556 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57558 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57566 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57568 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57571 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57573 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57731 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57743 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+INFO:     127.0.0.1:57749 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+INFO:     127.0.0.1:57754 - "GET /health HTTP/1.1" 200 OK
+Processing: Company_Policy_Handbook.pdf
+  Created 68 chunks across 15 pages.
+Generating embeddings...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 6177.62it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10634.96it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 11088.35it/s]
+Storing data in vector store...
+Storing data in vector store...
+Storing data in vector store...
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+Successfully indexed Company_Policy_Handbook.pdf (68 chunks).
+INFO:     127.0.0.1:57744 - "POST /documents/upload HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57751 - "POST /documents/upload HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57757 - "POST /documents/upload HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57768 - "GET /health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/ingestion/loader.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8858]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8467.53it/s]
+WARNING:  WatchFiles detected changes in 'app/ingestion/ingest.py'. Reloading...
+INFO:     Started server process [12981]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12981]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 13144.69it/s]
+WARNING:  WatchFiles detected changes in 'app/ingestion/ingest.py'. Reloading...
+INFO:     Started server process [12988]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12988]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14152.31it/s]
+INFO:     Started server process [12989]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/api/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12989]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 13475.99it/s]
+INFO:     Started server process [12991]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/ingestion/ingest.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12991]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8034.32it/s]
+INFO:     Started server process [12993]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:57915 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57927 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57942 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57944 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57945 - "POST /ask HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app/ingestion/loader.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12993]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8170.62it/s]
+WARNING:  WatchFiles detected changes in 'app/ingestion/ingest.py'. Reloading...
+INFO:     Started server process [13062]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13062]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 13723.86it/s]
+WARNING:  WatchFiles detected changes in 'app/api/main.py'. Reloading...
+INFO:     Started server process [13063]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13063]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10023.51it/s]
+INFO:     Started server process [13067]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app/ingestion/chunker.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13067]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8067.63it/s]
+INFO:     Started server process [13080]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:58057 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58066 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59435 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59438 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59439 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59441 - "POST /ask HTTP/1.1" 200 OK
+Groq API error (Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kz6fk98febzvdn8w4rvah7wp` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Used 11011, Requested 3649. Please try again in 13.3s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}), falling back to Ollama.
+INFO:     127.0.0.1:59483 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59485 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59487 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59488 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59489 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59490 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59491 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59492 - "POST /ask HTTP/1.1" 200 OK
+Groq API error (Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kz6fk98febzvdn8w4rvah7wp` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7574, Requested 711. Please try again in 2.137499999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}), falling back to Ollama.
+INFO:     127.0.0.1:59503 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59506 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59513 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59515 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59517 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59518 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59519 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59520 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59523 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59524 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59526 - "POST /ask HTTP/1.1" 200 OK
