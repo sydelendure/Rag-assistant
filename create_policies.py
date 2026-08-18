@@ -22,7 +22,7 @@ title_style = ParagraphStyle(
 heading_style = ParagraphStyle(
     "Heading",
     parent=styles["Heading2"],
-    spaceBefore=12,
+    spaceBefore=11,
     spaceAfter=8,
 )
 
