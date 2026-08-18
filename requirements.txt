@@ -14,4 +14,5 @@ pandas
 openpyxl
 python-docx
 pillow
-ocrmac
+pytesseract
+ocrmac; sys_platform == 'darwin'

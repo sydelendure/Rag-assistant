@@ -263,6 +263,39 @@ st.markdown(
 )
 
 # ==================================================
+# API Server Auto-Launcher (for Cloud Deployments)
+# ==================================================
+@st.cache_resource
+def ensure_backend_running():
+    """Ensure FastAPI backend is running in background (for Streamlit Cloud)."""
+    import threading
+    import time
+    
+    try:
+        r = requests.get(f"{API_URL}/health", timeout=1.0)
+        if r.status_code == 200:
+            return True
+    except Exception:
+        pass
+
+    def _run_server():
+        try:
+            import uvicorn
+            from app.api.main import app as fastapi_app
+            uvicorn.run(fastapi_app, host="127.0.0.1", port=8000, log_level="warning")
+        except Exception:
+            pass
+
+    thread = threading.Thread(target=_run_server, daemon=True)
+    thread.start()
+    time.sleep(2.0)
+    return True
+
+
+ensure_backend_running()
+
+
+# ==================================================
 # API Health Check
 # ==================================================
 def check_api_health():
