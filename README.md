@@ -1,39 +1,40 @@
-# 🏢 Employee Policy & Knowledge Assistant (RAG)
+# Employee Policy & Knowledge Assistant (RAG)
 
-A high-performance **Retrieval-Augmented Generation (RAG)** system powered by **Groq LPU Cloud Inference**, **Pinecone Cloud Vector Database**, and **Multi-Format Ingestion (PDF, CSV, Excel, Word, Text, and OCR Images)**.
+A high-performance Retrieval-Augmented Generation (RAG) system powered by Groq LPU Cloud Inference, Pinecone Cloud Vector Database, and Multi-Format Ingestion (PDF, CSV, Excel, Word, Text, and OCR Images).
 
 Employees can ask natural language questions regarding corporate guidelines, benefits, and compliance rules, receiving instantaneous, grounded answers with exact document and page citations.
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+## System Architecture & Data Flow
 
 ```mermaid
 flowchart TD
-    subgraph INGESTION["📥 1. Ingestion Pipeline"]
-        A["📄 Policy Files<br/>(PDF, CSV, XLSX, DOCX, TXT, Images)"] --> B{"Universal Loader"}
+    subgraph INGESTION["1. Ingestion Pipeline"]
+        A["Policy Files<br/>(PDF, CSV, XLSX, DOCX, TXT, Images)"] --> B{"Universal Loader"}
         B -->|PDFs / Text / Word| C["PyMuPDF & python-docx"]
         B -->|Tables / Spreadsheets| D["Pandas & OpenPyXL"]
         B -->|Images / Infographics| E["Vision OCR Engine"]
         
         C & D & E --> F["Smart Structural Chunker<br/>(Topic, Section & Page Tracking)"]
         F --> G["Sentence Transformer<br/>(all-MiniLM-L6-v2)"]
-        G --> H[("🌲 Pinecone Cloud / ChromaDB<br/>Vector Store (384-dim)")]
+        G --> H[("Pinecone Cloud / ChromaDB<br/>Vector Store (384-dim)")]
     end
 
-    subgraph QUERY["⚡ 2. Query & Generation Pipeline"]
-        U["👤 Employee / User"] -->|Selects Scope & Asks Query| UI["🖥️ Streamlit Web UI<br/>(Port 8501)"]
-        UI -->|HTTP POST /ask| API["🚀 FastAPI Gateway<br/>(Port 8000)"]
+    subgraph QUERY["2. Query & Generation Pipeline"]
+        U["Employee / User"] -->|Selects Scope & Asks Query| UI["Streamlit Web UI<br/>(Port 8501)"]
+        UI -->|HTTP POST /ask| API["FastAPI Gateway<br/>(Port 8000)"]
         
         API --> Q_EMB["Query Embedder"]
         Q_EMB --> V_SEARCH["Dense Vector Search<br/>+ Document Filtering"]
         H -.->|Retrieves Top Chunks| V_SEARCH
         
         V_SEARCH --> CTX["Enriched Policy Context<br/>+ Citations Metadata"]
-        CTX --> LLM{"LLM Inference Engine"}
+        LLM{"LLM Inference Engine"}
+        CTX --> LLM
         
-        LLM -->|Primary Engine| GROQ["⚡ Groq Cloud LPU<br/>(groq/compound-mini ~0.8s)"]
-        LLM -.->|Local Fallback| OLLAMA["🦙 Ollama Local<br/>(qwen3:8b)"]
+        LLM -->|Primary Engine| GROQ["Groq Cloud LPU<br/>(groq/compound-mini ~0.8s)"]
+        LLM -.->|Local Fallback| OLLAMA["Ollama Local<br/>(qwen3:8b)"]
         
         GROQ & OLLAMA --> GEN_ANS["Accurate Grounded Answer<br/>+ Document/Page Sources"]
         GEN_ANS --> API
@@ -49,23 +50,23 @@ flowchart TD
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-* **⚡ Ultra-Fast Inference:** Powered by **Groq LPU** (`groq/compound-mini`), achieving sub-second (~0.8s – 1.4s) answer generation.
-* **🌲 Scalable Cloud Vectors:** Serverless **Pinecone Cloud Vector Database** with cosine similarity indexing and metadata filtering.
-* **📂 Universal Multi-Format Support:**
-  * 📄 **PDFs:** Page-by-page text extraction with header tracking.
-  * 📊 **Spreadsheets:** Row-and-column semantic mapping for `.csv`, `.xlsx`, and `.xls`.
-  * 📝 **Documents:** `.docx`, `.doc`, `.txt`, `.md` structured parsing.
-  * 📸 **Image OCR:** Scanned policies, infographics, and posters (`.png`, `.jpg`, `.jpeg`, `.webp`, `.tiff`, `.bmp`).
-* **🎯 Knowledge Base Scoping:** Search across all documents simultaneously or isolate queries to a specific policy.
-* **🔍 Dynamic Suggested Questions:** Instant question prompts that automatically adapt based on the selected document scope.
-* **🛡️ Zero Hallucinations:** Strict grounding rules prevent fabricated answers when questions fall outside company policies.
-* **🎨 Modern Streamlit UI:** Premium interface with citation pills, scope switcher, dynamic badges, and document deletion management.
+* **Ultra-Fast Inference:** Powered by Groq LPU (`groq/compound-mini`), achieving sub-second (~0.8s – 1.4s) answer generation.
+* **Scalable Cloud Vectors:** Serverless Pinecone Cloud Vector Database with cosine similarity indexing and metadata filtering.
+* **Universal Multi-Format Support:**
+  * **PDFs:** Page-by-page text extraction with header tracking.
+  * **Spreadsheets:** Row-and-column semantic mapping for `.csv`, `.xlsx`, and `.xls`.
+  * **Documents:** `.docx`, `.doc`, `.txt`, `.md` structured parsing.
+  * **Image OCR:** Scanned policies, infographics, and posters (`.png`, `.jpg`, `.jpeg`, `.webp`, `.tiff`, `.bmp`).
+* **Knowledge Base Scoping:** Search across all documents simultaneously or isolate queries to a specific policy.
+* **Dynamic Suggested Questions:** Instant question prompts that automatically adapt based on the selected document scope.
+* **Zero Hallucinations:** Strict grounding rules prevent fabricated answers when questions fall outside company policies.
+* **Modern Streamlit UI:** Clean interface with citation pills, scope switcher, dynamic badges, and document deletion management.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone & Install Dependencies
 ```bash
@@ -103,10 +104,10 @@ GROQ_MODEL=groq/compound-mini
 
 ---
 
-## 🏃 Running the Application
+## Running the Application
 
 ### Option A: One-Click Start (Recommended)
-Run both the **FastAPI Backend** and **Streamlit UI** simultaneously:
+Run both the FastAPI Backend and Streamlit UI simultaneously:
 ```bash
 ./start.sh
 ```
@@ -129,7 +130,7 @@ streamlit run ui.py
 
 ---
 
-## 🧪 Testing & Verification
+## Testing & Verification
 
 Run the automated test suite covering 6 policy domains, negative out-of-scope queries, and document scope isolation:
 ```bash
@@ -138,7 +139,7 @@ Run the automated test suite covering 6 policy domains, negative out-of-scope qu
 
 ---
 
-## 📡 API Endpoints Reference
+## API Endpoints Reference
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
