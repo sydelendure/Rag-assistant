@@ -419,7 +419,7 @@ with st.sidebar:
                         unsafe_allow_html=True,
                     )
                 with c_del:
-                    if st.button("✕", key=f"del_{doc_file.name}", help=f"Delete {doc_file.name} from vector store"):
+                    if st.button("", key=f"del_{doc_file.name}", icon=":material/close:", help=f"Delete {doc_file.name} from vector store"):
                         try:
                             # Try API first
                             try:
@@ -481,7 +481,7 @@ with st.sidebar:
                         st.rerun()
                     except Exception as ex:
                         st.session_state.upload_status = {"type": "error", "msg": f"Ingestion error: {ex}"}
-                        st.rerun()()
+                        st.rerun()
 
     # Conversation Actions
     st.markdown("---")
@@ -497,27 +497,27 @@ with st.sidebar:
 def show_about_dialog():
     st.markdown(
         """
-        ### 🏢 Welcome to your Enterprise Policy Assistant
-        This **AI-powered Knowledge Assistant (RAG)** helps employees quickly search, clarify, and understand company policies, benefits, remote work rules, and compliance standards.
+        ### Welcome to the Employee Policy Assistant
+        This **Enterprise Knowledge Assistant (RAG)** enables employees to query and verify organizational policies, human resources guidelines, employee benefits, and compliance standards.
 
         ---
 
-        #### ⚡ Key Capabilities
-        * **⚡ Sub-Second AI Answers:** Powered by **Groq LPU Cloud** (`groq/compound-mini`) for instant, direct answers without waiting.
-        * **🌲 Scalable Cloud Search:** Powered by **Pinecone Serverless Vector DB** with cosine similarity indexing.
-        * **📂 Universal Multi-Format Ingestion:** Ingests **PDFs, CSV spreadsheets, Excel (`.xlsx`), Word (`.docx`), Markdown**, and **Scanned Images/Infographics** using Optical Character Recognition (OCR).
-        * **📖 Verbatim Source Citations:** Every answer references the exact source document, topic, section, and page number.
-        * **🎯 Targeted Knowledge Scoping:** Query the global knowledge base or isolate answers strictly to a chosen policy.
+        #### Key Capabilities
+        * **High-Speed Inference:** Accelerated by **Groq LPU Cloud** (`groq/compound-mini`) for sub-second, direct answers.
+        * **Cloud Vector Search:** Semantic similarity indexing powered by **Pinecone Serverless Vector Database**.
+        * **Universal Multi-Format Ingestion:** Ingests **PDFs, CSV spreadsheets, Excel (`.xlsx`), Word (`.docx`), Markdown**, and **Scanned Images/Infographics** using Optical Character Recognition (OCR).
+        * **Verbatim Source Citations:** Every synthesized answer references the exact source document, topic, section, and page number.
+        * **Targeted Knowledge Scoping:** Query the global knowledge base or isolate inquiries strictly to a specific policy.
 
         ---
 
-        #### 🚀 Getting Started
-        1. **Ask a Question:** Type your question in the chat bar at the bottom, or click any **Suggested Query**.
-        2. **Filter by Policy:** Use the **Knowledge Base Scope** dropdown to target a specific document.
-        3. **Upload New Documents:** In the left sidebar, open **"Ingest New Document"** to upload any PDF, CSV, Excel, Word, or image file.
+        #### Getting Started
+        1. **Submit an Inquiry:** Enter your question in the chat input below, or select any recommended prompt.
+        2. **Filter Knowledge Scope:** Use the **Knowledge Base Scope** selector to focus queries on a particular document.
+        3. **Manage Documents:** Use the sidebar's **"Ingest New Document"** tool to upload and index any authorized company file.
         """
     )
-    if st.button("Got It, Let's Get Started!", type="primary", use_container_width=True):
+    if st.button("Continue to Assistant", type="primary", use_container_width=True, icon=":material/arrow_forward:"):
         st.session_state.has_seen_intro = True
         st.rerun()
 
@@ -546,7 +546,7 @@ with col_brand:
 with col_top_right:
     c_info_btn, c_stat_badge = st.columns([1, 2], vertical_alignment="center")
     with c_info_btn:
-        if st.button("ℹ️ Info", help="Click to view overview, capabilities, and user guide", use_container_width=True):
+        if st.button("About", icon=":material/info:", help="Click to view overview, capabilities, and user guide", use_container_width=True):
             show_about_dialog()
     with c_stat_badge:
         st.markdown(status_indicator_html, unsafe_allow_html=True)
