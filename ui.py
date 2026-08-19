@@ -491,6 +491,44 @@ with st.sidebar:
 
 
 # ==================================================
+# App Introduction / Info Pop-Up Dialog
+# ==================================================
+@st.dialog("About Employee Policy Assistant", width="large")
+def show_about_dialog():
+    st.markdown(
+        """
+        ### 🏢 Welcome to your Enterprise Policy Assistant
+        This **AI-powered Knowledge Assistant (RAG)** helps employees quickly search, clarify, and understand company policies, benefits, remote work rules, and compliance standards.
+
+        ---
+
+        #### ⚡ Key Capabilities
+        * **⚡ Sub-Second AI Answers:** Powered by **Groq LPU Cloud** (`groq/compound-mini`) for instant, direct answers without waiting.
+        * **🌲 Scalable Cloud Search:** Powered by **Pinecone Serverless Vector DB** with cosine similarity indexing.
+        * **📂 Universal Multi-Format Ingestion:** Ingests **PDFs, CSV spreadsheets, Excel (`.xlsx`), Word (`.docx`), Markdown**, and **Scanned Images/Infographics** using Optical Character Recognition (OCR).
+        * **📖 Verbatim Source Citations:** Every answer references the exact source document, topic, section, and page number.
+        * **🎯 Targeted Knowledge Scoping:** Query the global knowledge base or isolate answers strictly to a chosen policy.
+
+        ---
+
+        #### 🚀 Getting Started
+        1. **Ask a Question:** Type your question in the chat bar at the bottom, or click any **Suggested Query**.
+        2. **Filter by Policy:** Use the **Knowledge Base Scope** dropdown to target a specific document.
+        3. **Upload New Documents:** In the left sidebar, open **"Ingest New Document"** to upload any PDF, CSV, Excel, Word, or image file.
+        """
+    )
+    if st.button("Got It, Let's Get Started!", type="primary", use_container_width=True):
+        st.session_state.has_seen_intro = True
+        st.rerun()
+
+
+# Auto Pop-up on First Application Load
+if "has_seen_intro" not in st.session_state:
+    st.session_state.has_seen_intro = True
+    show_about_dialog()
+
+
+# ==================================================
 # Main App Header
 # ==================================================
 vector_engine_name = health_data.get("vector_engine", "CHROMA VECTOR DB").upper()
@@ -499,10 +537,21 @@ if is_online:
 else:
     status_indicator_html = '<div class="status-container status-offline"><span class="indicator-dot dot-red"></span><span>DISCONNECTED | BACKEND UNREACHABLE</span></div>'
 
-st.markdown(
-    f'<div class="top-nav"><div class="org-brand"><h1 class="org-title">Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div><div>{status_indicator_html}</div></div>',
-    unsafe_allow_html=True,
-)
+col_brand, col_top_right = st.columns([5, 3], vertical_alignment="center")
+with col_brand:
+    st.markdown(
+        '<div class="org-brand"><h1 class="org-title">Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
+        unsafe_allow_html=True,
+    )
+with col_top_right:
+    c_info_btn, c_stat_badge = st.columns([1, 2], vertical_alignment="center")
+    with c_info_btn:
+        if st.button("ℹ️ Info", help="Click to view overview, capabilities, and user guide", use_container_width=True):
+            show_about_dialog()
+    with c_stat_badge:
+        st.markdown(status_indicator_html, unsafe_allow_html=True)
+
+st.markdown('<div style="border-bottom: 1px solid #E8E2D8; margin-bottom: 1.25rem; margin-top: 0.5rem;"></div>', unsafe_allow_html=True)
 
 # Document Scope Selector
 available_docs = ["All Documents"]

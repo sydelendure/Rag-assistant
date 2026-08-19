@@ -126,7 +126,7 @@ PYTHONPATH=. uvicorn app.api.main:app --host 127.0.0.1 --port 8000 --reload
 source .venv/bin/activate
 streamlit run ui.py
 ```
-* Web Application: [http://localhost:8501](http://localhost:8501)
+* Web Application: [https://rag-assistant-kwxdkxswiuwbumgxtcfbnn.streamlit.app/](https://rag-assistant-kwxdkxswiuwbumgxtcfbnn.streamlit.app/)
 
 ---
 
