@@ -499,6 +499,47 @@ with st.sidebar:
 # ==================================================
 # HR Support / Escalation Dialog Modal
 # ==================================================
+@st.dialog("Support Ticket Confirmation", width="medium")
+def show_ticket_receipt_dialog(ticket: dict):
+    ticket_id = ticket.get("ticket_id", "HR-2026-0000")
+    category = ticket.get("category", "General Inquiry")
+    urgency = ticket.get("urgency", "Normal")
+    subject = ticket.get("subject", "HR Request")
+    created_at = ticket.get("created_at", "")[:19].replace("T", " ")
+    email_dest = "Anonymous (Confidential)" if ticket.get("is_anonymous") else ticket.get("employee_email", "employee@company.com")
+
+    st.markdown(
+        f"""
+        <div style="background: #F4EFEA; border: 1px solid #E5DFD6; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; text-align: center;">
+            <div style="font-size: 0.75rem; font-weight: 600; color: #736C64; text-transform: uppercase; letter-spacing: 0.05em;">Official HR Reference Number</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 700; color: #1E6B37; margin: 0.4rem 0;">{ticket_id}</div>
+            <div style="font-size: 0.8rem; color: #524C44;">Status: <span style="font-weight: 600; color: #1E6B37;">Open — Assigned to HR Operations Team</span></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.caption(f"**Category:** {category}")
+        st.caption(f"**Urgency:** {urgency}")
+    with col2:
+        st.caption(f"**Timestamp:** {created_at}")
+        st.caption(f"**Sender:** {email_dest}")
+
+    st.markdown("---")
+    st.markdown(f"**Subject:** {subject}")
+    st.markdown(f"**Message Details:**\n> {ticket.get('message', '')}")
+
+    st.info(
+        "Your request has been routed to the Human Resources department. A representative will review and respond within 24 business hours.",
+        icon=":material/info:",
+    )
+
+    if st.button("Close Receipt & Return to Chat", type="primary", use_container_width=True, icon=":material/check:"):
+        st.rerun()
+
+
 @st.dialog("Contact Human Resources", width="medium")
 def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
     st.markdown(
@@ -566,19 +607,17 @@ def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
                     is_anonymous=is_anon,
                     source_question=prefill_message,
                 )
-                st.session_state.hr_ticket_confirmation = ticket
+                st.session_state.active_ticket_receipt = ticket
                 st.rerun()
 
-    if "hr_ticket_confirmation" in st.session_state and st.session_state.hr_ticket_confirmation:
-        t = st.session_state.pop("hr_ticket_confirmation")
-        st.success(
-            f"Ticket #{t['ticket_id']} successfully registered with HR ({t['category']}). A representative will review and respond within 24 business hours.",
-            icon=":material/check_circle:",
-        )
 
+# Check if ticket receipt dialog was triggered
+if st.session_state.get("active_ticket_receipt"):
+    t_receipt = st.session_state.pop("active_ticket_receipt")
+    show_ticket_receipt_dialog(t_receipt)
 
-# Check if HR dialog was triggered
-if st.session_state.get("show_hr_dialog_requested"):
+# Check if HR contact dialog was triggered
+elif st.session_state.get("show_hr_dialog_requested"):
     req_info = st.session_state.pop("show_hr_dialog_requested")
     show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
 
