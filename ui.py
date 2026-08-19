@@ -345,6 +345,24 @@ def query_rag_engine(question: str, document_filter: str = None):
     }
 
 
+def query_rag_engine_stream(question: str, document_filter: str = None):
+    """Retrieve chunks and return a token generator stream for real-time live typing animation."""
+    retriever, generator = get_rag_services()
+    doc_arg = None if (not document_filter or document_filter == "All Documents") else document_filter
+    chunks = retriever.retrieve(question, document=doc_arg)
+    sources = [
+        {
+            "document": c.get("document", "Document"),
+            "topic": c.get("topic", c.get("document", "Policy")),
+            "section": c.get("section", "General"),
+            "page": c.get("page", 1),
+        }
+        for c in chunks
+    ]
+    stream = generator.generate_stream(question, chunks)
+    return stream, sources
+
+
 is_online, health_data = get_system_health()
 indexed_chunks = health_data.get("documents_indexed", 0)
 
@@ -876,55 +894,52 @@ if query_to_run:
         st.markdown(query_to_run)
 
     with st.chat_message("assistant", avatar=":material/smart_toy:"):
-        with st.spinner("Analyzing company policies and synthesizing answer..."):
-            try:
-                data = query_rag_engine(query_to_run, selected_scope)
-                answer_text = data.get("answer", "No answer generated.")
-                sources_list = data.get("sources", [])
-                
-                st.markdown(answer_text)
-                if sources_list:
-                    with st.expander(f"Source References ({len(sources_list)} documents matched)", expanded=False):
-                        for s in sources_list:
-                            doc_name = s.get("document", "Document")
-                            page_num = s.get("page")
-                            topic = s.get("topic", "")
-                            sec = s.get("section", "General")
-                            page_str = f" | Page {page_num}" if page_num else ""
-                            topic_str = f" | {topic}" if topic and topic != doc_name else ""
-                            st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
+        try:
+            answer_stream, sources_list = query_rag_engine_stream(query_to_run, selected_scope)
+            answer_text = st.write_stream(answer_stream)
+            
+            if sources_list:
+                with st.expander(f"Source References ({len(sources_list)} documents matched)", expanded=False):
+                    for s in sources_list:
+                        doc_name = s.get("document", "Document")
+                        page_num = s.get("page")
+                        topic = s.get("topic", "")
+                        sec = s.get("section", "General")
+                        page_str = f" | Page {page_num}" if page_num else ""
+                        topic_str = f" | {topic}" if topic and topic != doc_name else ""
+                        st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
 
-                from app.services.hr_service import is_sensitive_or_unresolved
-                needs_hr = is_sensitive_or_unresolved(query_to_run, answer_text)
+            from app.services.hr_service import is_sensitive_or_unresolved
+            needs_hr = is_sensitive_or_unresolved(query_to_run, answer_text)
 
-                if needs_hr:
-                    st.markdown(
-                        """
-                        <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
-                            <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
-                            <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
-                                This topic may require policy exception approval, confidential review, or direct HR confirmation.
-                            </div>
+            if needs_hr:
+                st.markdown(
+                    """
+                    <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
+                        <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
+                        <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
+                            This topic may require policy exception approval, confidential review, or direct HR confirmation.
                         </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-                    if st.button("Contact HR / Raise Issue", key="hr_esc_live", icon=":material/support_agent:"):
-                        st.session_state.show_hr_dialog_requested = {
-                            "subject": f"Inquiry: {query_to_run[:45]}...",
-                            "message": query_to_run,
-                        }
-                        st.rerun()
-
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": answer_text,
-                        "sources": sources_list,
-                        "needs_hr": needs_hr,
-                        "source_question": query_to_run,
-                    }
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
                 )
+                if st.button("Contact HR / Raise Issue", key="hr_esc_live", icon=":material/support_agent:"):
+                    st.session_state.show_hr_dialog_requested = {
+                        "subject": f"Inquiry: {query_to_run[:45]}...",
+                        "message": query_to_run,
+                    }
+                    st.rerun()
+
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": answer_text,
+                    "sources": sources_list,
+                    "needs_hr": needs_hr,
+                    "source_question": query_to_run,
+                }
+            )
             except Exception as ex:
                 err_text = f"Inquiry failed: {ex}"
                 st.error(err_text)
