@@ -19,11 +19,13 @@ class Retriever:
         query: str,
         distance_threshold: float = None,
         document_filter: str = None,
+        document: str = None,
     ):
         """
         Retrieve relevant policy chunks for a user query.
         Optionally filter search strictly to a specific document.
         """
+        doc_scope = document_filter or document
 
         if not query.strip():
             raise ValueError("Query cannot be empty.")
@@ -39,7 +41,7 @@ class Retriever:
             query
         )
 
-        where_clause = {"document": document_filter} if document_filter else None
+        where_clause = {"document": doc_scope} if doc_scope else None
 
         # Search ChromaDB and filter weak matches
         results = self.vector_store.search(
