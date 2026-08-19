@@ -315,6 +315,19 @@ def get_system_health():
         }
 
 
+def _safe_retrieve(retriever, question: str, doc_arg: str = None):
+    """Safely query retriever handling any argument signature or cached bytecode."""
+    if doc_arg:
+        try:
+            return retriever.retrieve(question, document=doc_arg)
+        except TypeError:
+            try:
+                return retriever.retrieve(question, document_filter=doc_arg)
+            except TypeError:
+                pass
+    return retriever.retrieve(question)
+
+
 def query_rag_engine(question: str, document_filter: str = None):
     try:
         payload = {"question": question}
@@ -329,7 +342,7 @@ def query_rag_engine(question: str, document_filter: str = None):
     # Direct Native execution fallback (works 100% on Streamlit Cloud)
     retriever, generator = get_rag_services()
     doc_arg = None if (not document_filter or document_filter == "All Documents") else document_filter
-    chunks = retriever.retrieve(question, document=doc_arg)
+    chunks = _safe_retrieve(retriever, question, doc_arg)
     answer = generator.generate(question, chunks)
     return {
         "answer": answer,
@@ -349,7 +362,7 @@ def query_rag_engine_stream(question: str, document_filter: str = None):
     """Retrieve chunks and return a token generator stream for real-time live typing animation."""
     retriever, generator = get_rag_services()
     doc_arg = None if (not document_filter or document_filter == "All Documents") else document_filter
-    chunks = retriever.retrieve(question, document=doc_arg)
+    chunks = _safe_retrieve(retriever, question, doc_arg)
     sources = [
         {
             "document": c.get("document", "Document"),
