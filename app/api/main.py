@@ -95,6 +95,25 @@ def health_check():
         }
 
 
+@app.get("/documents")
+def list_documents():
+    """List all available policy documents."""
+    docs_dir = Path("documents")
+    if not docs_dir.exists():
+        return {"documents": []}
+
+    supported_extensions = {
+        ".pdf", ".csv", ".xlsx", ".xls", ".docx", ".doc", ".txt", ".md",
+        ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".bmp"
+    }
+    files = [
+        {"filename": p.name, "size_bytes": p.stat().st_size}
+        for p in docs_dir.glob("*.*")
+        if p.suffix.lower() in supported_extensions
+    ]
+    return {"documents": files}
+
+
 # ==================================================
 # Ask Question
 # ==================================================
