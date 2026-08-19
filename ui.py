@@ -485,9 +485,102 @@ with st.sidebar:
 
     # Conversation Actions
     st.markdown("---")
-    if st.button("Reset Conversation", icon=":material/restart_alt:"):
-        st.session_state.messages = []
-        st.rerun()
+    c_act1, c_act2 = st.columns(2)
+    with c_act1:
+        if st.button("Reset", icon=":material/restart_alt:", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+    with c_act2:
+        if st.button("HR Help", icon=":material/support_agent:", help="Contact HR / Raise a confidential ticket", use_container_width=True):
+            st.session_state.show_hr_dialog_requested = {"subject": "General HR Inquiry", "message": ""}
+            st.rerun()
+
+
+# ==================================================
+# HR Support / Escalation Dialog Modal
+# ==================================================
+@st.dialog("Contact Human Resources", width="medium")
+def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
+    st.markdown(
+        "<p style='color: #6E685F; font-size: 0.88rem; margin-bottom: 1rem;'>Submit a confidential inquiry, policy exception request, or workplace grievance directly to HR.</p>",
+        unsafe_allow_html=True,
+    )
+
+    with st.form("hr_ticket_modal_form", clear_on_submit=False):
+        is_anon = st.checkbox(
+            "Submit Anonymously (Confidential / Whistleblower Protection)",
+            value=False,
+            help="When checked, your name and email will not be saved or transmitted to HR.",
+        )
+
+        c_name, c_email = st.columns(2)
+        with c_name:
+            emp_name = st.text_input("Your Name", value="Employee" if not is_anon else "Anonymous", disabled=is_anon)
+        with c_email:
+            emp_email = st.text_input("Work Email", value="" if not is_anon else "confidential@company.internal", disabled=is_anon, placeholder="name@company.com")
+
+        c_cat, c_urg = st.columns(2)
+        with c_cat:
+            category = st.selectbox(
+                "Inquiry Category",
+                options=[
+                    "Policy Clarification / Exception",
+                    "Workplace Grievance / Harassment",
+                    "Payroll & Compensation Dispute",
+                    "Medical & Emergency Leave Exception",
+                    "Health & Insurance Benefits",
+                    "General HR Support",
+                ],
+                index=0,
+            )
+        with c_urg:
+            urgency = st.selectbox(
+                "Urgency Level",
+                options=["Standard (24-48 hrs)", "High Priority (Same Day)", "Confidential / Sensitive"],
+                index=0,
+            )
+
+        subject = st.text_input("Subject", value=prefill_subject or "HR Policy Inquiry")
+        details = st.text_area(
+            "Detailed Message for HR",
+            value=prefill_message,
+            placeholder="Please provide specifics regarding your query or requested policy exception...",
+            height=120,
+        )
+
+        submitted = st.form_submit_button("Submit Request to HR", type="primary", use_container_width=True, icon=":material/send:")
+        if submitted:
+            if not subject.strip() or not details.strip():
+                st.error("Please provide both a subject and message for your request.")
+            elif not is_anon and ("@" not in emp_email or "." not in emp_email):
+                st.error("Please enter a valid work email address or check 'Submit Anonymously'.")
+            else:
+                from app.services.hr_service import create_ticket
+                ticket = create_ticket(
+                    subject=subject,
+                    message=details,
+                    category=category,
+                    urgency=urgency,
+                    name=emp_name if not is_anon else "Anonymous",
+                    email=emp_email if not is_anon else "confidential@company.internal",
+                    is_anonymous=is_anon,
+                    source_question=prefill_message,
+                )
+                st.session_state.hr_ticket_confirmation = ticket
+                st.rerun()
+
+    if "hr_ticket_confirmation" in st.session_state and st.session_state.hr_ticket_confirmation:
+        t = st.session_state.pop("hr_ticket_confirmation")
+        st.success(
+            f"Ticket #{t['ticket_id']} successfully registered with HR ({t['category']}). A representative will review and respond within 24 business hours.",
+            icon=":material/check_circle:",
+        )
+
+
+# Check if HR dialog was triggered
+if st.session_state.get("show_hr_dialog_requested"):
+    req_info = st.session_state.pop("show_hr_dialog_requested")
+    show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
 
 
 # ==================================================
@@ -681,7 +774,7 @@ if len(st.session_state.messages) == 0:
             st.rerun()
 
 # Conversation Stream
-for message in st.session_state.messages:
+for idx, message in enumerate(st.session_state.messages):
     role_icon = ":material/person:" if message["role"] == "user" else ":material/smart_toy:"
     with st.chat_message(message["role"], avatar=role_icon):
         st.markdown(message["content"])
@@ -695,6 +788,26 @@ for message in st.session_state.messages:
                     page_str = f" | Page {page_num}" if page_num else ""
                     topic_str = f" | {topic}" if topic and topic != doc_name else ""
                     st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
+
+        if message["role"] == "assistant" and message.get("needs_hr"):
+            st.markdown(
+                """
+                <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
+                    <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
+                        This topic may require policy exception approval, confidential review, or direct HR confirmation.
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            q_ref = message.get("source_question", "")
+            if st.button("Contact HR / Raise Issue", key=f"hr_esc_{idx}", icon=":material/support_agent:"):
+                st.session_state.show_hr_dialog_requested = {
+                    "subject": f"Inquiry: {q_ref[:45]}..." if q_ref else "HR Policy Inquiry",
+                    "message": q_ref or message["content"],
+                }
+                st.rerun()
 
 # If conversation is in progress, keep suggested queries accessible in an expander
 if len(st.session_state.messages) > 0:
@@ -742,11 +855,35 @@ if query_to_run:
                             topic_str = f" | {topic}" if topic and topic != doc_name else ""
                             st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
 
+                from app.services.hr_service import is_sensitive_or_unresolved
+                needs_hr = is_sensitive_or_unresolved(query_to_run, answer_text)
+
+                if needs_hr:
+                    st.markdown(
+                        """
+                        <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
+                            <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
+                            <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
+                                This topic may require policy exception approval, confidential review, or direct HR confirmation.
+                            </div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                    if st.button("Contact HR / Raise Issue", key="hr_esc_live", icon=":material/support_agent:"):
+                        st.session_state.show_hr_dialog_requested = {
+                            "subject": f"Inquiry: {query_to_run[:45]}...",
+                            "message": query_to_run,
+                        }
+                        st.rerun()
+
                 st.session_state.messages.append(
                     {
                         "role": "assistant",
                         "content": answer_text,
                         "sources": sources_list,
+                        "needs_hr": needs_hr,
+                        "source_question": query_to_run,
                     }
                 )
             except Exception as ex:

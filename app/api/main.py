@@ -309,3 +309,50 @@ def delete_document(filename: str):
         "message": f"Document '{safe_name}' deleted successfully.",
         "remaining_chunks": retriever.vector_store.count(),
     }
+
+
+# ==================================================
+# HR Support & Ticket Escalation
+# ==================================================
+
+class TicketCreateRequest(BaseModel):
+    subject: str
+    message: str
+    category: str = "Policy Clarification"
+    urgency: str = "Normal"
+    name: str | None = "Employee"
+    email: str | None = ""
+    is_anonymous: bool = False
+    source_question: str | None = None
+
+
+@app.post("/hr/tickets")
+def submit_hr_ticket(ticket: TicketCreateRequest):
+    """Create a new HR escalation ticket."""
+    from app.services.hr_service import create_ticket
+
+    if not ticket.subject.strip() or not ticket.message.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Ticket subject and message cannot be empty.",
+        )
+
+    record = create_ticket(
+        subject=ticket.subject,
+        message=ticket.message,
+        category=ticket.category,
+        urgency=ticket.urgency,
+        name=ticket.name,
+        email=ticket.email,
+        is_anonymous=ticket.is_anonymous,
+        source_question=ticket.source_question,
+    )
+    return record
+
+
+@app.get("/hr/tickets")
+def list_hr_tickets():
+    """List all submitted HR escalation tickets."""
+    from app.services.hr_service import get_all_tickets
+
+    return get_all_tickets()
