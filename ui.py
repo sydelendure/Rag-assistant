@@ -493,28 +493,23 @@ with st.sidebar:
 # ==================================================
 # App Introduction / Info Pop-Up Dialog
 # ==================================================
-@st.dialog("About Employee Policy Assistant", width="large")
+@st.dialog("About Employee Policy Assistant", width="medium")
 def show_about_dialog():
     st.markdown(
         """
-        ### Welcome to the Employee Policy Assistant
-        This **Enterprise Knowledge Assistant (RAG)** enables employees to query and verify organizational policies, human resources guidelines, employee benefits, and compliance standards.
+        ### Employee Policy Assistant
+        An AI-powered knowledge assistant providing verified answers to company policies, employee benefits, and compliance questions with exact citations.
 
         ---
 
-        #### Key Capabilities
-        * **High-Speed Inference:** Accelerated by **Groq LPU Cloud** (`groq/compound-mini`) for sub-second, direct answers.
-        * **Cloud Vector Search:** Semantic similarity indexing powered by **Pinecone Serverless Vector Database**.
-        * **Universal Multi-Format Ingestion:** Ingests **PDFs, CSV spreadsheets, Excel (`.xlsx`), Word (`.docx`), Markdown**, and **Scanned Images/Infographics** using Optical Character Recognition (OCR).
-        * **Verbatim Source Citations:** Every synthesized answer references the exact source document, topic, section, and page number.
-        * **Targeted Knowledge Scoping:** Query the global knowledge base or isolate inquiries strictly to a specific policy.
+        * **Sub-Second Speed:** Accelerated by **Groq Cloud LPU** (`groq/compound-mini`).
+        * **Cloud Vector Search:** Powered by **Pinecone Serverless Vector DB**.
+        * **Multi-Format Ingestion:** Supports **PDF, Excel, CSV, Word, Text, and OCR Images**.
+        * **Verbatim Citations:** References exact document, section, and page numbers.
 
         ---
 
-        #### Getting Started
-        1. **Submit an Inquiry:** Enter your question in the chat input below, or select any recommended prompt.
-        2. **Filter Knowledge Scope:** Use the **Knowledge Base Scope** selector to focus queries on a particular document.
-        3. **Manage Documents:** Use the sidebar's **"Ingest New Document"** tool to upload and index any authorized company file.
+        **Quick Start:** Type an inquiry in the chat input, select a specific policy using the **Scope** filter, or upload new files in the sidebar.
         """
     )
     if st.button("Continue to Assistant", type="primary", use_container_width=True, icon=":material/arrow_forward:"):
