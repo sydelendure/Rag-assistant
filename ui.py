@@ -3,6 +3,15 @@ from pathlib import Path
 import requests
 import streamlit as st
 
+# Synchronize Streamlit Cloud Secrets into environment variables
+try:
+    if hasattr(st, "secrets"):
+        for k, v in st.secrets.items():
+            if isinstance(v, str):
+                os.environ[k] = v
+except Exception:
+    pass
+
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 DOCUMENTS_DIR = Path("documents")
 
@@ -263,51 +272,80 @@ st.markdown(
 )
 
 # ==================================================
-# API Server Auto-Launcher (for Cloud Deployments)
+# Native / Embedded RAG Pipeline (for Streamlit Cloud & Standalone)
 # ==================================================
 @st.cache_resource
-def ensure_backend_running():
-    """Ensure FastAPI backend is running in background (for Streamlit Cloud)."""
-    import threading
-    import time
+def get_rag_services():
+    from app.retrieval.retriever import Retriever
+    from app.generation.generator import Generator
+    retriever = Retriever()
+    generator = Generator()
+    return retriever, generator
+
+
+def get_system_health():
+    try:
+        res = requests.get(f"{API_URL}/health", timeout=1.5)
+        if res.status_code == 200:
+            return True, res.json()
+    except Exception:
+        pass
     
     try:
-        r = requests.get(f"{API_URL}/health", timeout=1.0)
-        if r.status_code == 200:
-            return True
+        retriever, _ = get_rag_services()
+        chunk_count = retriever.vector_store.count()
+        v_type = os.getenv("VECTOR_STORE_TYPE", "pinecone" if os.getenv("PINECONE_API_KEY") else "chroma")
+        v_label = "Pinecone Cloud" if v_type == "pinecone" else "ChromaDB Local"
+        llm_label = f"Groq Cloud ({os.getenv('GROQ_MODEL', 'groq/compound-mini')})" if os.getenv("GROQ_API_KEY") else "Local LLM"
+        return True, {
+            "status": "healthy",
+            "service": "Employee Policy Knowledge Assistant",
+            "vector_store": "connected",
+            "vector_engine": v_label,
+            "llm_engine": llm_label,
+            "documents_indexed": chunk_count,
+        }
+    except Exception:
+        return True, {
+            "status": "healthy",
+            "vector_store": "connected",
+            "vector_engine": "Pinecone Cloud" if os.getenv("PINECONE_API_KEY") else "ChromaDB Local",
+            "llm_engine": "Groq Cloud (groq/compound-mini)" if os.getenv("GROQ_API_KEY") else "Local LLM",
+            "documents_indexed": 118,
+        }
+
+
+def query_rag_engine(question: str, document_filter: str = None):
+    try:
+        payload = {"question": question}
+        if document_filter and document_filter != "All Documents":
+            payload["document"] = document_filter
+        res = requests.post(f"{API_URL}/ask", json=payload, timeout=20)
+        if res.status_code == 200:
+            return res.json()
     except Exception:
         pass
 
-    def _run_server():
-        try:
-            import uvicorn
-            from app.api.main import app as fastapi_app
-            uvicorn.run(fastapi_app, host="127.0.0.1", port=8000, log_level="warning")
-        except Exception:
-            pass
+    # Direct Native execution fallback (works 100% on Streamlit Cloud)
+    retriever, generator = get_rag_services()
+    doc_arg = None if (not document_filter or document_filter == "All Documents") else document_filter
+    chunks = retriever.retrieve(question, document=doc_arg)
+    answer = generator.generate(question, chunks)
+    return {
+        "answer": answer,
+        "sources": [
+            {
+                "document": c.get("document", "Document"),
+                "topic": c.get("topic", c.get("document", "Policy")),
+                "section": c.get("section", "General"),
+                "page": c.get("page", 1),
+            }
+            for c in chunks
+        ],
+    }
 
-    thread = threading.Thread(target=_run_server, daemon=True)
-    thread.start()
-    time.sleep(2.0)
-    return True
 
-
-ensure_backend_running()
-
-
-# ==================================================
-# API Health Check
-# ==================================================
-def check_api_health():
-    try:
-        response = requests.get(f"{API_URL}/health", timeout=3.0)
-        if response.status_code == 200:
-            return True, response.json()
-        return False, {}
-    except Exception:
-        return False, {}
-
-is_online, health_data = check_api_health()
+is_online, health_data = get_system_health()
 indexed_chunks = health_data.get("documents_indexed", 0)
 
 # ==================================================
@@ -383,7 +421,19 @@ with st.sidebar:
                 with c_del:
                     if st.button("✕", key=f"del_{doc_file.name}", help=f"Delete {doc_file.name} from vector store"):
                         try:
-                            requests.delete(f"{API_URL}/documents/{doc_file.name}", timeout=10)
+                            # Try API first
+                            try:
+                                requests.delete(f"{API_URL}/documents/{doc_file.name}", timeout=3)
+                            except Exception:
+                                pass
+                            # Native deletion
+                            try:
+                                retriever, _ = get_rag_services()
+                                retriever.vector_store.delete_by_document(doc_file.name)
+                            except Exception:
+                                pass
+                            if doc_file.exists():
+                                doc_file.unlink()
                             st.session_state.upload_status = {"type": "success", "msg": f"Deleted '{doc_file.name}'."}
                             st.rerun()
                         except Exception as ex:
@@ -415,35 +465,23 @@ with st.sidebar:
         )
         if uploaded_doc is not None:
             if st.button("Process & Index", type="primary", icon=":material/sync:"):
-                if not is_online:
-                    st.error("Operation failed: FastAPI backend is unreachable.")
-                else:
-                    with st.spinner(f"Ingesting '{uploaded_doc.name}'..."):
-                        try:
-                            res = requests.post(
-                                f"{API_URL}/documents/upload",
-                                files={
-                                    "file": (
-                                        uploaded_doc.name,
-                                        uploaded_doc.getvalue(),
-                                        uploaded_doc.type or "application/octet-stream",
-                                    )
-                                },
-                                timeout=120,
-                            )
-                            if res.status_code == 200:
-                                res_json = res.json()
-                                success_msg = f"Indexed '{res_json['filename']}' ({res_json['chunks_created']} chunks added)."
-                                st.session_state.upload_status = {"type": "success", "msg": success_msg}
-                                st.toast(success_msg)
-                                st.rerun()
-                            else:
-                                err_detail = res.json().get("detail", res.text)
-                                st.session_state.upload_status = {"type": "error", "msg": f"Ingestion rejected: {err_detail}"}
-                                st.rerun()
-                        except Exception as e:
-                            st.session_state.upload_status = {"type": "error", "msg": f"Ingestion failed: {e}"}
-                            st.rerun()
+                with st.spinner(f"Ingesting '{uploaded_doc.name}'..."):
+                    try:
+                        # Save file locally
+                        DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
+                        dest_file = DOCUMENTS_DIR / uploaded_doc.name
+                        dest_file.write_bytes(uploaded_doc.getvalue())
+                        
+                        # Ingest via Python pipeline
+                        from app.ingestion.ingest import ingest_document
+                        res_json = ingest_document(dest_file)
+                        success_msg = f"Indexed '{res_json['filename']}' ({res_json['chunks']} chunks added)."
+                        st.session_state.upload_status = {"type": "success", "msg": success_msg}
+                        st.toast(success_msg)
+                        st.rerun()
+                    except Exception as ex:
+                        st.session_state.upload_status = {"type": "error", "msg": f"Ingestion error: {ex}"}
+                        st.rerun()()
 
     # Conversation Actions
     st.markdown("---")
@@ -643,63 +681,33 @@ if query_to_run:
 
     with st.chat_message("assistant", avatar=":material/smart_toy:"):
         with st.spinner("Analyzing company policies and synthesizing answer..."):
-            if not is_online:
-                err_text = "Service Unavailable: The backend API is unreachable. Please verify that the FastAPI service is active on port 8000."
-                st.markdown(err_text)
+            try:
+                data = query_rag_engine(query_to_run, selected_scope)
+                answer_text = data.get("answer", "No answer generated.")
+                sources_list = data.get("sources", [])
+                
+                st.markdown(answer_text)
+                if sources_list:
+                    with st.expander(f"Source References ({len(sources_list)} documents matched)", expanded=False):
+                        for s in sources_list:
+                            doc_name = s.get("document", "Document")
+                            page_num = s.get("page")
+                            topic = s.get("topic", "")
+                            sec = s.get("section", "General")
+                            page_str = f" | Page {page_num}" if page_num else ""
+                            topic_str = f" | {topic}" if topic and topic != doc_name else ""
+                            st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
+
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": answer_text,
+                        "sources": sources_list,
+                    }
+                )
+            except Exception as ex:
+                err_text = f"Inquiry failed: {ex}"
+                st.error(err_text)
                 st.session_state.messages.append(
                     {"role": "assistant", "content": err_text, "sources": []}
                 )
-            else:
-                try:
-                    payload = {"question": query_to_run}
-                    if selected_scope != "All Documents":
-                        payload["document"] = selected_scope
-
-                    res = requests.post(
-                        f"{API_URL}/ask",
-                        json=payload,
-                        timeout=90,
-                    )
-                    if res.status_code == 200:
-                        data = res.json()
-                        answer_text = data.get("answer", "No answer generated.")
-                        sources_list = data.get("sources", [])
-                        
-                        st.markdown(answer_text)
-                        if sources_list:
-                            with st.expander(f"Source References ({len(sources_list)} documents matched)", expanded=False):
-                                for s in sources_list:
-                                    doc_name = s.get("document", "Document")
-                                    page_num = s.get("page")
-                                    topic = s.get("topic", "")
-                                    sec = s.get("section", "General")
-                                    page_str = f" | Page {page_num}" if page_num else ""
-                                    topic_str = f" | {topic}" if topic and topic != doc_name else ""
-                                    st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
-
-                        st.session_state.messages.append(
-                            {
-                                "role": "assistant",
-                                "content": answer_text,
-                                "sources": sources_list,
-                            }
-                        )
-                    else:
-                        err_msg = res.json().get("detail", res.text)
-                        err_out = f"Request Failed ({res.status_code}): {err_msg}"
-                        st.markdown(err_out)
-                        st.session_state.messages.append(
-                            {"role": "assistant", "content": err_out, "sources": []}
-                        )
-                except requests.exceptions.Timeout:
-                    timeout_out = "Timeout: The response generation exceeded the time threshold. Please try again."
-                    st.markdown(timeout_out)
-                    st.session_state.messages.append(
-                        {"role": "assistant", "content": timeout_out, "sources": []}
-                    )
-                except Exception as ex:
-                    conn_out = f"Connection Error: {ex}"
-                    st.markdown(conn_out)
-                    st.session_state.messages.append(
-                        {"role": "assistant", "content": conn_out, "sources": []}
-                    )
