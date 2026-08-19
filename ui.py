@@ -940,9 +940,9 @@ if query_to_run:
                     "source_question": query_to_run,
                 }
             )
-            except Exception as ex:
-                err_text = f"Inquiry failed: {ex}"
-                st.error(err_text)
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": err_text, "sources": []}
-                )
+        except Exception as ex:
+            err_text = f"Inquiry failed: {ex}"
+            st.error(err_text)
+            st.session_state.messages.append(
+                {"role": "assistant", "content": err_text, "sources": []}
+            )
