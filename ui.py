@@ -455,10 +455,13 @@ with st.sidebar:
                                 requests.delete(f"{API_URL}/documents/{doc_file.name}", timeout=3)
                             except Exception:
                                 pass
-                            # Native deletion
+                            # Native deletion from Pinecone / Chroma
                             try:
                                 retriever, _ = get_rag_services()
-                                retriever.vector_store.delete_by_document(doc_file.name)
+                                if hasattr(retriever.vector_store, "delete_document"):
+                                    retriever.vector_store.delete_document(doc_file.name)
+                                elif hasattr(retriever.vector_store, "delete_by_document"):
+                                    retriever.vector_store.delete_by_document(doc_file.name)
                             except Exception:
                                 pass
                             if doc_file.exists():

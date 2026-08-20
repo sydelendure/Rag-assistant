@@ -151,6 +151,8 @@ class PineconeVectorStore:
         """Delete all vectors belonging to a specific document."""
         self.index.delete(filter={"document": {"$eq": document_name}})
 
+    delete_by_document = delete_document
+
     # Purge All Vectors in Index #
     def delete_all(self):
         """Delete all vectors in the index."""
