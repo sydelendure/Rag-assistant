@@ -60,7 +60,7 @@ class Generator:
             )
 
         context = "\n\n---\n\n".join(context_parts)
-
+#System Prompt#
         system_instruction = (
             "You are the official Employee Policy Assistant. "
             "Answer the question factually and directly in 1-2 clear sentences based strictly on the provided policy context. "

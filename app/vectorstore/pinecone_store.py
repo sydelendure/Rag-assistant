@@ -93,7 +93,7 @@ class PineconeVectorStore:
         for i in range(0, len(vectors), batch_size):
             batch = vectors[i : i + batch_size]
             self.index.upsert(vectors=batch)
-
+#top 5 chunks retrieval
     def search(
         self,
         query_embedding: List[float],

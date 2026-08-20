@@ -132,9 +132,9 @@ streamlit run ui.py
 
 ## Testing & Verification
 
-Run the automated test suite covering 6 policy domains, negative out-of-scope queries, and document scope isolation:
+Run the automated test suite covering multi-format parsing, Groq streaming latency, scoped retrieval, and HR escalation:
 ```bash
-.venv/bin/python test_rag_rigorous.py
+PYTHONPATH=. .venv/bin/python test_complete_suite.py
 ```
 
 ---

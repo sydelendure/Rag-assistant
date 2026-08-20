@@ -17,6 +17,7 @@ class Retriever:
     def retrieve(
         self,
         query: str,
+        top_k: int = None,
         distance_threshold: float = None,
         document_filter: str = None,
         document: str = None,
@@ -35,6 +36,7 @@ class Retriever:
             if distance_threshold is not None
             else self.distance_threshold
         )
+        k = top_k if top_k is not None else self.top_k
 
         # Convert the question into an embedding
         query_embedding = self.embedder.generate_embedding(
@@ -46,7 +48,7 @@ class Retriever:
         # Search ChromaDB and filter weak matches
         results = self.vector_store.search(
             query_embedding,
-            top_k=self.top_k,
+            top_k=k,
             distance_threshold=threshold,
             where=where_clause,
         )
