@@ -476,6 +476,18 @@ with st.sidebar:
     else:
         st.info("Documents repository directory not initialized.")
 
+    if st.button("Restore Default Policies", icon=":material/restore:", help="Re-generate and index all standard company policy documents", use_container_width=True):
+        with st.spinner("Restoring and indexing all company policy documents..."):
+            try:
+                import create_policies
+                from app.ingestion.ingest import ingest_documents
+                ingest_documents()
+                st.session_state.upload_status = {"type": "success", "msg": "Restored and indexed all 10 company policy documents."}
+                st.rerun()
+            except Exception as e:
+                st.session_state.upload_status = {"type": "error", "msg": f"Restore failed: {e}"}
+                st.rerun()
+
     # Upload & Ingest New Policies
     st.markdown("---")
     
