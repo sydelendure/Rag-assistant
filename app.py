@@ -809,17 +809,24 @@ with col_top_right:
 
 st.markdown('<div style="border-bottom: 1px solid #E8E2D8; margin-bottom: 1.25rem; margin-top: 0.5rem;"></div>', unsafe_allow_html=True)
 
-# Document Scope Selector Dropdown #
+# Document Scope Selector Dropdown & Theme Control Bar #
 available_docs = ["All Documents"]
 if DOCUMENTS_DIR.exists():
     available_docs += sorted([p.name for p in DOCUMENTS_DIR.glob("*.*") if p.suffix.lower() in SUPPORTED_EXTS])
 
-selected_scope = st.selectbox(
-    "Knowledge Base Scope",
-    options=available_docs,
-    index=0,
-    help="Target your query strictly to a specific document or search across the entire knowledge base.",
-)
+col_scope_sel, col_mode_toggle = st.columns([3.2, 1.2], vertical_alignment="bottom")
+with col_scope_sel:
+    selected_scope = st.selectbox(
+        "Knowledge Base Scope",
+        options=available_docs,
+        index=0,
+        help="Target your query strictly to a specific document or search across the entire knowledge base.",
+    )
+with col_mode_toggle:
+    theme_btn_text = "🌙 Dark Theme" if not is_dark else "☀️ Light Theme"
+    if st.button(theme_btn_text, key="main_scope_theme_toggle", use_container_width=True, help="Switch between Light and Dark mode"):
+        st.session_state.dark_mode = not is_dark
+        st.rerun()
 
 # Session State Initialization #
 if "messages" not in st.session_state:
