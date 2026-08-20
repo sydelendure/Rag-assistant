@@ -269,8 +269,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# # Embedded RAG Pipeline & Service Initialization #
-@st.cache_resource
+# Embedded RAG Pipeline & Service Initialization #
+@st.cache_resource(show_spinner="Running...")
 def get_rag_services():
     from app.retrieval.retriever import Retriever
     from app.generation.generator import Generator
