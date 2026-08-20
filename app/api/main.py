@@ -1,3 +1,4 @@
+# Imports & FastAPI Framework #
 from pathlib import Path
 import shutil
 
@@ -8,7 +9,7 @@ from app.retrieval.retriever import Retriever
 from app.generation.generator import Generator
 from app.ingestion.ingest import ingest_document
 
-
+# FastAPI Application Instance #
 app = FastAPI(
     title="Employee Policy Knowledge Assistant",
     description="RAG-based employee policy question answering system.",
@@ -16,10 +17,7 @@ app = FastAPI(
 )
 
 
-# ==================================================
-# Request / Response Models
-# ==================================================
-
+# Pydantic Request & Response Data Models #
 class QuestionRequest(BaseModel):
     question: str
     document: str | None = None
@@ -37,18 +35,12 @@ class AnswerResponse(BaseModel):
     sources: list[Source]
 
 
-# ==================================================
-# Initialize RAG Components
-# ==================================================
-
+# Global RAG Engine Components (Retriever & Generator) #
 retriever = Retriever(top_k=5)
 generator = Generator()
 
 
-# ==================================================
-# Root Endpoint
-# ==================================================
-
+# Root API Endpoint #
 @app.get("/")
 def root():
     return {
@@ -56,10 +48,7 @@ def root():
     }
 
 
-# ==================================================
-# Health Check
-# ==================================================
-
+# Health Check & Diagnostic Status Endpoint #
 @app.get("/health")
 def health_check():
 
@@ -95,6 +84,7 @@ def health_check():
         }
 
 
+# List All Available Policy Documents Endpoint #
 @app.get("/documents")
 def list_documents():
     """List all available policy documents."""
@@ -114,18 +104,15 @@ def list_documents():
     return {"documents": files}
 
 
-# ==================================================
-# Ask Question
-# ==================================================
-
+# Ask Question & Synthesize Answer Endpoint #
 @app.post(
     "/ask",
     response_model=AnswerResponse,
 )
 def ask_question(request: QuestionRequest):
 
+    # Validate Input Query #
     question = request.question.strip()
-
     if not question:
         raise HTTPException(
             status_code=400,
@@ -133,29 +120,19 @@ def ask_question(request: QuestionRequest):
         )
 
     try:
-
-        # ------------------------------------------
-        # Retrieve relevant policy chunks
-        # ------------------------------------------
-
+        # Step 1: Retrieve Relevant Policy Chunks #
         retrieved_chunks = retriever.retrieve(
             question,
             document_filter=request.document,
         )
 
-        # ------------------------------------------
-        # Generate answer
-        # ------------------------------------------
-
+        # Step 2: Synthesize Answer via LLM #
         answer = generator.generate(
             question=question,
             retrieved_chunks=retrieved_chunks,
         )
 
-        # ------------------------------------------
-        # Prepare source information
-        # ------------------------------------------
-
+        # Step 3: Format Citation Sources #
         sources = [
             Source(
                 document=chunk.get("document", "Document"),
@@ -172,43 +149,32 @@ def ask_question(request: QuestionRequest):
         )
 
     except ValueError as error:
-
         raise HTTPException(
             status_code=400,
             detail=str(error),
         )
 
     except Exception as error:
-
         raise HTTPException(
             status_code=500,
             detail=f"An internal error occurred: {error}",
         )
 
 
-# ==================================================
-# Upload and Index Policy Document
-# ==================================================
-
+# Upload & Ingest New Policy Document Endpoint #
 @app.post("/documents/upload")
 def upload_document(
     file: UploadFile = File(...)
 ):
 
-    # ----------------------------------------------
-    # Validate filename
-    # ----------------------------------------------
-
+    # Validate File Name #
     if not file.filename:
         raise HTTPException(
             status_code=400,
             detail="No file provided.",
         )
 
-    # ----------------------------------------------
-    # Validate file type
-    # ----------------------------------------------
-
+    # Validate File Format Extension #
     supported_extensions = {
         ".pdf", ".csv", ".xlsx", ".xls", ".docx", ".doc", ".txt", ".md",
         ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".bmp"
@@ -223,96 +189,51 @@ def upload_document(
             ),
         )
 
-    # ----------------------------------------------
-    # Create documents directory
-    # ----------------------------------------------
-
+    # Create Documents Directory & Safe Path #
     documents_directory = Path("documents")
-
     documents_directory.mkdir(
         parents=True,
         exist_ok=True,
     )
-
-    # Prevent directory traversal
-    safe_filename = Path(
-        file.filename
-    ).name
-
-    file_path = (
-        documents_directory / safe_filename
-    )
+    safe_filename = Path(file.filename).name
+    file_path = documents_directory / safe_filename
 
     try:
-
-        # ------------------------------------------
-        # 1. Save uploaded file
-        # ------------------------------------------
-
+        # Step 1: Save Uploaded File to Disk #
         with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-            shutil.copyfileobj(
-                file.file,
-                buffer,
-            )
+        # Step 2: Ingest & Index into Vector Database #
+        ingestion_result = ingest_document(file_path)
 
-        # ------------------------------------------
-        # 2. Ingest the uploaded file
-        # ------------------------------------------
-
-        ingestion_result = ingest_document(
-            file_path
-        )
-
-        # ------------------------------------------
-        # 3. Return successful result
-        # ------------------------------------------
-
+        # Step 3: Return Ingestion Confirmation #
         return {
-            "message": (
-                "Document uploaded and "
-                "indexed successfully."
-            ),
+            "message": "Document uploaded and indexed successfully.",
             "filename": safe_filename,
-            "chunks_created": (
-                ingestion_result["chunks"]
-            ),
+            "chunks_created": ingestion_result["chunks"],
         }
 
     except ValueError as error:
-
-        # Remove invalid/failed upload
         if file_path.exists():
             file_path.unlink()
-
         raise HTTPException(
             status_code=400,
             detail=str(error),
         )
 
     except Exception as error:
-
-        # Remove file if ingestion failed
         if file_path.exists():
             file_path.unlink()
-
         raise HTTPException(
             status_code=500,
-            detail=(
-                "Failed to upload and index "
-                f"the document: {error}"
-            ),
+            detail=f"Failed to upload and index the document: {error}",
         )
 
     finally:
-
         file.file.close()
 
 
-# ==================================================
-# Delete Policy Document
-# ==================================================
-
+# Delete Document & Purge Vectors Endpoint #
 @app.delete("/documents/{filename}")
 def delete_document(filename: str):
     """Delete a document from disk and remove its vectors from vector store."""
@@ -330,10 +251,7 @@ def delete_document(filename: str):
     }
 
 
-# ==================================================
-# HR Support & Ticket Escalation
-# ==================================================
-
+# HR Ticket Escalation Pydantic Model #
 class TicketCreateRequest(BaseModel):
     subject: str
     message: str
@@ -345,6 +263,7 @@ class TicketCreateRequest(BaseModel):
     source_question: str | None = None
 
 
+# Create HR Support Ticket Endpoint #
 @app.post("/hr/tickets")
 def submit_hr_ticket(ticket: TicketCreateRequest):
     """Create a new HR escalation ticket."""
@@ -369,6 +288,7 @@ def submit_hr_ticket(ticket: TicketCreateRequest):
     return record
 
 
+# List All Submitted HR Tickets Endpoint #
 @app.get("/hr/tickets")
 def list_hr_tickets():
     """List all submitted HR escalation tickets."""

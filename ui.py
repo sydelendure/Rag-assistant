@@ -1,9 +1,10 @@
+# Imports & Standard Libraries #
 import os
 from pathlib import Path
 import requests
 import streamlit as st
 
-# Synchronize Streamlit Cloud Secrets into environment variables
+# Synchronize Streamlit Cloud Secrets into Environment Variables #
 try:
     if hasattr(st, "secrets"):
         for k, v in st.secrets.items():
@@ -12,12 +13,11 @@ try:
 except Exception:
     pass
 
+# Global Configuration & Paths #
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 DOCUMENTS_DIR = Path("documents")
 
-# ==================================================
-# Page Configuration
-# ==================================================
+# Streamlit Page Configuration #
 st.set_page_config(
     page_title="Employee Policy Assistant",
     page_icon=":material/corporate_fare:",
@@ -25,9 +25,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ==================================================
-# Custom CSS (Anthropic-Inspired Editorial & Warm Light Theme)
-# ==================================================
+# Custom Design & Editorial CSS Styling #
 st.markdown(
     """
     <style>
@@ -271,9 +269,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ==================================================
-# Native / Embedded RAG Pipeline (for Streamlit Cloud & Standalone)
-# ==================================================
+# # Embedded RAG Pipeline & Service Initialization #
 @st.cache_resource
 def get_rag_services():
     from app.retrieval.retriever import Retriever
@@ -283,6 +279,7 @@ def get_rag_services():
     return retriever, generator
 
 
+# System Health & Diagnostic Monitoring #
 def get_system_health():
     try:
         res = requests.get(f"{API_URL}/health", timeout=1.5)
@@ -315,6 +312,7 @@ def get_system_health():
         }
 
 
+# Fail-Safe Vector Retrieval Helper #
 def _safe_retrieve(retriever, question: str, doc_arg: str = None):
     """Safely query retriever handling any argument signature or cached bytecode."""
     if doc_arg:
@@ -328,6 +326,7 @@ def _safe_retrieve(retriever, question: str, doc_arg: str = None):
     return retriever.retrieve(question)
 
 
+# RAG Synchronous Query Handler #
 def query_rag_engine(question: str, document_filter: str = None):
     try:
         payload = {"question": question}
@@ -358,6 +357,7 @@ def query_rag_engine(question: str, document_filter: str = None):
     }
 
 
+# RAG Real-Time Token Generator Stream #
 def query_rag_engine_stream(question: str, document_filter: str = None):
     """Retrieve chunks and return a token generator stream for real-time live typing animation."""
     retriever, generator = get_rag_services()
@@ -379,9 +379,7 @@ def query_rag_engine_stream(question: str, document_filter: str = None):
 is_online, health_data = get_system_health()
 indexed_chunks = health_data.get("documents_indexed", 0)
 
-# ==================================================
-# Sidebar Navigation & Management Portal
-# ==================================================
+# Sidebar Navigation & Management Portal #
 with st.sidebar:
     st.markdown("### Policy Hub & Operations")
     st.caption("Internal Governance & Policy Directory")
@@ -527,9 +525,7 @@ with st.sidebar:
             st.rerun()
 
 
-# ==================================================
-# HR Support / Escalation Dialog Modal
-# ==================================================
+# Modal Dialog 1: Support Ticket Confirmation Receipt #
 @st.dialog("Support Ticket Confirmation", width="medium")
 def show_ticket_receipt_dialog(ticket: dict):
     ticket_id = ticket.get("ticket_id", "HR-2026-0000")
@@ -571,6 +567,7 @@ def show_ticket_receipt_dialog(ticket: dict):
         st.rerun()
 
 
+# Modal Dialog 2: Confidential HR Ticket Form #
 @st.dialog("Contact Human Resources", width="medium")
 def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
     st.markdown(
@@ -642,20 +639,7 @@ def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
                 st.rerun()
 
 
-# Check if ticket receipt dialog was triggered
-if st.session_state.get("active_ticket_receipt"):
-    t_receipt = st.session_state.pop("active_ticket_receipt")
-    show_ticket_receipt_dialog(t_receipt)
-
-# Check if HR contact dialog was triggered
-elif st.session_state.get("show_hr_dialog_requested"):
-    req_info = st.session_state.pop("show_hr_dialog_requested")
-    show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
-
-
-# ==================================================
-# App Introduction / Info Pop-Up Dialog
-# ==================================================
+# Modal Dialog 3: System Overview & Capabilities Dialog #
 @st.dialog("About Employee Policy Assistant", width="medium")
 def show_about_dialog():
     st.markdown(
@@ -680,15 +664,24 @@ def show_about_dialog():
         st.rerun()
 
 
-# Auto Pop-up on First Application Load
+# Check if ticket receipt dialog was triggered #
+if st.session_state.get("active_ticket_receipt"):
+    t_receipt = st.session_state.pop("active_ticket_receipt")
+    show_ticket_receipt_dialog(t_receipt)
+
+# Check if HR contact dialog was triggered #
+elif st.session_state.get("show_hr_dialog_requested"):
+    req_info = st.session_state.pop("show_hr_dialog_requested")
+    show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
+
+
+# Auto Pop-up on First Application Load #
 if "has_seen_intro" not in st.session_state:
     st.session_state.has_seen_intro = True
     show_about_dialog()
 
 
-# ==================================================
-# Main App Header
-# ==================================================
+# Main Application Navigation Header #
 vector_engine_name = health_data.get("vector_engine", "CHROMA VECTOR DB").upper()
 if is_online:
     status_indicator_html = f'<div class="status-container status-online"><span class="indicator-dot dot-green"></span><span>CONNECTED | {vector_engine_name} ({indexed_chunks} CHUNKS)</span></div>'
@@ -711,7 +704,7 @@ with col_top_right:
 
 st.markdown('<div style="border-bottom: 1px solid #E8E2D8; margin-bottom: 1.25rem; margin-top: 0.5rem;"></div>', unsafe_allow_html=True)
 
-# Document Scope Selector
+# Document Scope Selector Dropdown #
 available_docs = ["All Documents"]
 if DOCUMENTS_DIR.exists():
     available_docs += sorted([p.name for p in DOCUMENTS_DIR.glob("*.*") if p.suffix.lower() in SUPPORTED_EXTS])
@@ -723,11 +716,11 @@ selected_scope = st.selectbox(
     help="Target your query strictly to a specific document or search across the entire knowledge base.",
 )
 
-# Session State Initialization
+# Session State Initialization #
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Comprehensive Document-Specific Suggestions Mapping
+# Comprehensive Context-Aware Suggested Prompts Dictionary #
 DOCUMENT_SUGGESTIONS = {
     "All Documents": [
         "What is the annual leave entitlement and carry-forward limit?",

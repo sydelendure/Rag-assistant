@@ -1,15 +1,18 @@
+# Imports & Pinecone SDK #
 import os
 import hashlib
 from typing import List, Dict, Any
 from pinecone import Pinecone, ServerlessSpec
 
 
+# Pinecone Cloud Vector Store Integration #
 class PineconeVectorStore:
     """
     Pinecone cloud vector database integration for employee policy RAG.
     Compatible with the same API contract as ChromaVectorStore.
     """
 
+    # Initialization & Index Connection #
     def __init__(
         self,
         api_key: str = None,
@@ -32,7 +35,7 @@ class PineconeVectorStore:
 
         self.pc = Pinecone(api_key=self.api_key)
 
-        # Check if index exists, otherwise create a serverless index
+        # Check Index Existence or Create AWS Serverless Index #
         existing_indexes = [idx.name for idx in self.pc.list_indexes()]
         if self.index_name not in existing_indexes:
             self.pc.create_index(
@@ -44,6 +47,7 @@ class PineconeVectorStore:
 
         self.index = self.pc.Index(self.index_name)
 
+    # Vector Count Checker #
     def count(self) -> int:
         """Return the number of vectors stored in the index."""
         try:
@@ -52,6 +56,7 @@ class PineconeVectorStore:
         except Exception:
             return 0
 
+    # Batch Add Chunks & Embeddings (Deduplication via SHA-256) #
     def add_documents(
         self,
         chunks: List[Dict[str, Any]],
@@ -88,12 +93,13 @@ class PineconeVectorStore:
                 }
             )
 
-        # Pinecone upsert in batches of 100
+        # Pinecone Upsert in Batches of 100 #
         batch_size = 100
         for i in range(0, len(vectors), batch_size):
             batch = vectors[i : i + batch_size]
             self.index.upsert(vectors=batch)
-#top 5 chunks retrieval
+
+    # Top-K Nearest Neighbors Cosine Search #
     def search(
         self,
         query_embedding: List[float],
@@ -123,8 +129,7 @@ class PineconeVectorStore:
         filtered_distances = []
 
         for match in results.matches:
-            # Pinecone score for cosine is similarity (1.0 = identical).
-            # Convert similarity to distance: distance = 1.0 - similarity
+            # Convert Similarity (1.0 = identical) to Distance (0.0 = identical) #
             similarity = match.score
             distance = 1.0 - similarity if similarity is not None else 0.0
 
@@ -141,10 +146,12 @@ class PineconeVectorStore:
             "distances": [filtered_distances],
         }
 
+    # Delete Document by Name Filter #
     def delete_document(self, document_name: str):
         """Delete all vectors belonging to a specific document."""
         self.index.delete(filter={"document": {"$eq": document_name}})
 
+    # Purge All Vectors in Index #
     def delete_all(self):
         """Delete all vectors in the index."""
         self.index.delete(delete_all=True)

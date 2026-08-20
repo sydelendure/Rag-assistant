@@ -1,9 +1,11 @@
+# Imports & Dependencies #
 import io
 from pathlib import Path
 from typing import List, Dict, Any
 import pymupdf
 
 
+# PDF Multi-Page Text Extractor (PyMuPDF) #
 def load_pdf_pages(file_path: str) -> List[Dict[str, Any]]:
     """
     Extract text page-by-page from a PDF file.
@@ -26,6 +28,7 @@ def load_pdf_pages(file_path: str) -> List[Dict[str, Any]]:
     return pages
 
 
+# CSV Table & Spreadsheets Extractor (Pandas) #
 def load_csv_pages(file_path: str, rows_per_page: int = 20) -> List[Dict[str, Any]]:
     """
     Extract structured text from a CSV file, grouping rows into page-like chunks.
@@ -72,7 +75,8 @@ def load_csv_pages(file_path: str, rows_per_page: int = 20) -> List[Dict[str, An
     return pages
 
 
-def load_excel_pages(file_path: str, rows_per_page: int = 20) -> List[Dict[str, Any]]:
+# Excel Spreadsheet Extractor (.xlsx, .xls) #
+def load_excel_pages(file_path: str, rows_per_page: int = 25) -> List[Dict[str, Any]]:
     """
     Extract structured text from Excel spreadsheets (.xlsx, .xls) across all sheets.
     """
@@ -118,6 +122,7 @@ def load_excel_pages(file_path: str, rows_per_page: int = 20) -> List[Dict[str, 
     return pages
 
 
+# Word Document Extractor (.docx, .doc) #
 def load_docx_pages(file_path: str, paragraphs_per_page: int = 10) -> List[Dict[str, Any]]:
     """
     Extract text and tables from Word documents (.docx).
@@ -165,6 +170,7 @@ def load_docx_pages(file_path: str, paragraphs_per_page: int = 10) -> List[Dict[
     return pages
 
 
+# Plain Text & Markdown Extractor (.txt, .md) #
 def load_text_pages(file_path: str, max_chars_per_page: int = 1500) -> List[Dict[str, Any]]:
     """
     Extract text from plain text files (.txt, .md).
@@ -207,6 +213,7 @@ def load_text_pages(file_path: str, max_chars_per_page: int = 1500) -> List[Dict
     return pages
 
 
+# Scanned Image & Infographic OCR Extractor #
 def load_image_pages(file_path: str) -> List[Dict[str, Any]]:
     """
     Extract text from image files (.png, .jpg, .jpeg, .webp, .tiff, .bmp) using OCR.
@@ -244,6 +251,7 @@ def load_image_pages(file_path: str) -> List[Dict[str, Any]]:
     ]
 
 
+# Universal Multi-Format Document Router #
 def load_document_pages(file_path: str) -> List[Dict[str, Any]]:
     """
     Universal multi-format document loader.
@@ -271,6 +279,7 @@ def load_document_pages(file_path: str) -> List[Dict[str, Any]]:
         )
 
 
+# Helper: Extract Combined Text from All Pages #
 def load_pdf(file_path: str) -> str:
     """Extract combined text from all pages of a document."""
     pages = load_document_pages(file_path)

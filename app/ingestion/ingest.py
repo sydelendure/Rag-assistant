@@ -1,3 +1,4 @@
+# Imports & Ingestion Submodules #
 from pathlib import Path
 
 from app.ingestion.loader import load_document_pages
@@ -5,7 +6,7 @@ from app.ingestion.chunker import chunk_document
 from app.ingestion.embedder import Embedder
 from app.vectorstore import get_vector_store
 
-
+# Supported Formats & Directory Path #
 DOCUMENTS_DIR = Path("documents")
 SUPPORTED_EXTENSIONS = {
     ".pdf", ".csv", ".xlsx", ".xls", ".docx", ".doc", ".txt", ".md",
@@ -13,6 +14,7 @@ SUPPORTED_EXTENSIONS = {
 }
 
 
+# Single Document End-to-End Ingestion Pipeline #
 def ingest_document(file_path: Path):
     """
     Process a single document of any supported format:
@@ -22,6 +24,7 @@ def ingest_document(file_path: Path):
     Document → Multi-Page/Sheet/Row Extraction → Chunking → Embeddings → Vector DB
     """
 
+    # Validate File Existence & Format #
     if not file_path.exists():
         raise FileNotFoundError(
             f"Document not found: {file_path}"
@@ -35,26 +38,18 @@ def ingest_document(file_path: Path):
 
     print(f"Processing: {file_path.name}")
 
-    # ---------------------------------------------
-    # 1. Load document pages / structured rows
-    # ---------------------------------------------
-
+    # Step 1: Load Document Pages & Structured Rows #
     pages = load_document_pages(str(file_path))
-
     if not pages:
         raise ValueError(
             f"No text could be extracted from {file_path.name}."
         )
 
-    # ---------------------------------------------
-    # 2. Create chunks
-    # ---------------------------------------------
-
+    # Step 2: Create Hierarchical Chunks #
     chunks = chunk_document(
         pages,
         document_name=file_path.name,
     )
-
     if not chunks:
         raise ValueError(
             f"No chunks were created from {file_path.name}."
@@ -64,10 +59,7 @@ def ingest_document(file_path: Path):
         f"  Created {len(chunks)} chunks across {len(pages)} pages."
     )
 
-    # ---------------------------------------------
-    # 3. Prepare enriched text for embeddings
-    # ---------------------------------------------
-
+    # Step 3: Prepare Enriched Text for Embeddings #
     texts = [
         f"Document: {chunk['document']}\n"
         f"Policy: {chunk.get('topic', chunk['document'])}\n"
@@ -77,30 +69,15 @@ def ingest_document(file_path: Path):
         for chunk in chunks
     ]
 
-    # ---------------------------------------------
-    # 4. Generate embeddings
-    # ---------------------------------------------
-
+    # Step 4: Generate Dense Embeddings #
     print("Generating embeddings...")
-
     embedder = Embedder()
+    embeddings = embedder.generate_embeddings(texts)
 
-    embeddings = embedder.generate_embeddings(
-        texts
-    )
-
-    # ---------------------------------------------
-    # 5. Store in vector store
-    # ---------------------------------------------
-
+    # Step 5: Store in Vector Database (Pinecone / ChromaDB) #
     print("Storing data in vector store...")
-
     vector_store = get_vector_store()
-
-    vector_store.add_documents(
-        chunks,
-        embeddings,
-    )
+    vector_store.add_documents(chunks, embeddings)
 
     print(
         f"Successfully indexed "
@@ -114,6 +91,7 @@ def ingest_document(file_path: Path):
     }
 
 
+# Bulk Directory Ingestion Runner #
 def ingest_documents():
     """
     Load all policy documents of all supported formats, create chunks,
@@ -121,7 +99,6 @@ def ingest_documents():
 
     Used for initial/bulk ingestion.
     """
-
     all_files = [
         f for f in DOCUMENTS_DIR.glob("*.*")
         if f.suffix.lower() in SUPPORTED_EXTENSIONS
@@ -135,14 +112,9 @@ def ingest_documents():
 
     total_chunks = 0
 
-    # ---------------------------------------------
-    # Process every document
-    # ---------------------------------------------
-
+    # Ingest Every Discovered Document #
     for doc_file in all_files:
-
         result = ingest_document(doc_file)
-
         total_chunks += result["chunks"]
 
     print(
@@ -151,5 +123,6 @@ def ingest_documents():
     )
 
 
+# Command-Line Main Execution #
 if __name__ == "__main__":
     ingest_documents()

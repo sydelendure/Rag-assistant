@@ -1,12 +1,15 @@
+# Imports & Dependencies #
 import json
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
+# Persistent Ticket Storage Path #
 TICKETS_FILE = Path("data/hr_tickets.json")
 
 
+# Storage Directory & JSON File Initializer #
 def _ensure_storage():
     """Ensure data directory and tickets storage file exist."""
     TICKETS_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -14,6 +17,7 @@ def _ensure_storage():
         TICKETS_FILE.write_text("[]", encoding="utf-8")
 
 
+# Create & Persist HR Support Ticket #
 def create_ticket(
     subject: str,
     message: str,
@@ -29,11 +33,12 @@ def create_ticket(
     """
     _ensure_storage()
 
-    # Generate reference ID e.g. HR-2026-7492
+    # Generate Unique Ticket Reference ID (e.g. HR-2026-7492) #
     random_suffix = str(uuid.uuid4().hex[:4]).upper()
     current_year = datetime.now().year
     ticket_id = f"HR-{current_year}-{random_suffix}"
 
+    # Structured Ticket Record #
     ticket_record = {
         "ticket_id": ticket_id,
         "created_at": datetime.now().isoformat(),
@@ -49,6 +54,7 @@ def create_ticket(
         "assigned_to": "HR Operations Team",
     }
 
+    # Save to JSON Storage #
     try:
         content = TICKETS_FILE.read_text(encoding="utf-8")
         tickets: List[Dict[str, Any]] = json.loads(content) if content else []
@@ -61,6 +67,7 @@ def create_ticket(
     return ticket_record
 
 
+# Retrieve All Stored HR Tickets #
 def get_all_tickets() -> List[Dict[str, Any]]:
     """Retrieve all stored HR tickets."""
     _ensure_storage()
@@ -71,6 +78,7 @@ def get_all_tickets() -> List[Dict[str, Any]]:
         return []
 
 
+# Sensitive Keyword & Unresolved Answer Escalation Detector #
 def is_sensitive_or_unresolved(question: str, answer: str) -> bool:
     """
     Determine if a user question or generated answer requires HR escalation.
@@ -78,7 +86,7 @@ def is_sensitive_or_unresolved(question: str, answer: str) -> bool:
     q_lower = question.lower()
     a_lower = answer.lower()
 
-    # 1. Unresolved indicators in answer
+    # Rule 1: Unresolved or Missing Policy Signals in Answer #
     unresolved_signals = [
         "could not find",
         "cannot find",
@@ -103,7 +111,7 @@ def is_sensitive_or_unresolved(question: str, answer: str) -> bool:
         if signal in a_lower:
             return True
 
-    # 2. Sensitive keywords in query
+    # Rule 2: Workplace Grievance & Sensitive Query Keywords #
     sensitive_keywords = [
         "harass",
         "discrimina",

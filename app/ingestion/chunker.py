@@ -1,7 +1,9 @@
+# Regular Expressions & Type Hints #
 import re
 from typing import List, Dict, Union
 
 
+# Major Topic & Chapter Header Detection #
 def _is_major_topic(line: str) -> bool:
     """Detect if a line represents a major policy or chapter title."""
     clean = line.strip()
@@ -21,6 +23,7 @@ def _is_major_topic(line: str) -> bool:
     return False
 
 
+# Sub-Section & Policy Clause Header Detection #
 def _is_sub_section(line: str) -> bool:
     """Detect if a line represents a sub-section header."""
     clean = line.strip()
@@ -42,6 +45,7 @@ def _is_sub_section(line: str) -> bool:
     return False
 
 
+# Recursive Window Boundary Splitter (750 chars / 100 overlap) #
 def _split_long_text(text: str, max_chars: int = 750, overlap: int = 100) -> List[str]:
     """Split very long sections into overlapping sub-chunks."""
     if len(text) <= max_chars:
@@ -70,6 +74,7 @@ def _split_long_text(text: str, max_chars: int = 750, overlap: int = 100) -> Lis
     return chunks
 
 
+# Hierarchical Semantic Document Chunker #
 def chunk_document(
     pages_or_text: Union[List[Dict[str, any]], str],
     document_name: str,
@@ -96,6 +101,7 @@ def chunk_document(
     current_content = []
     current_page = 1
 
+    # Chunk Flush Closure #
     def flush_chunk():
         nonlocal current_content, current_section, current_topic, current_page
         if current_content:
@@ -114,6 +120,7 @@ def chunk_document(
                     )
             current_content = []
 
+    # Iterate Through Lines & Detect Hierarchies #
     for page_data in pages:
         page_num = page_data.get("page", 1)
         raw_text = page_data.get("text", "")
@@ -133,10 +140,10 @@ def chunk_document(
                 current_content.append(line)
                 current_page = page_num
 
-    # Flush final chunk
+    # Flush Final Pending Chunk #
     flush_chunk()
 
-    # Safe fallback if text had no body lines outside headers
+    # Fallback Handling #
     if not chunks:
         for page_data in pages:
             raw_text = page_data.get("text", "").strip()
@@ -156,6 +163,7 @@ def chunk_document(
     return chunks
 
 
+# Backward Compatibility Helper #
 def chunk_text(text: str, document_name: str) -> List[Dict[str, str]]:
     """Backward compatibility wrapper for chunk_document."""
     return chunk_document(text, document_name)
