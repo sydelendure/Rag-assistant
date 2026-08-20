@@ -190,9 +190,11 @@ QUESTION:
 
 DIRECT ANSWER:"""
 
-        # Stream via Groq Cloud API #
+        # Stream via Groq Cloud API with Natural ChatGPT Typing Cadence #
         if self.provider == "groq" and self.groq_client:
             try:
+                import time
+
                 stream_resp = self.groq_client.chat.completions.create(
                     messages=[
                         {"role": "system", "content": system_instruction},
@@ -209,6 +211,7 @@ DIRECT ANSWER:"""
                         token = getattr(delta, "content", "") or ""
                         if token:
                             yield token
+                            time.sleep(0.018)  # Smooth natural word-by-word typing cadence
                 return
             except Exception as e:
                 print(f"Groq streaming error ({e}), falling back to Ollama streaming.")
@@ -216,6 +219,7 @@ DIRECT ANSWER:"""
         # Stream via Local Ollama #
         try:
             import ollama
+            import time
 
             response_stream = ollama.chat(
                 model=self.ollama_model,
@@ -240,5 +244,6 @@ DIRECT ANSWER:"""
                     token = msg.get("content", "")
                 if token:
                     yield token
+                    time.sleep(0.018)
         except Exception as err:
             yield f"Inference error: {err}"
