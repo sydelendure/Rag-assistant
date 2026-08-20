@@ -35,51 +35,111 @@ SUPPORTED_EXTS = {
     ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".bmp"
 }
 
+# Theme State Initialization #
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+is_dark = st.session_state.dark_mode
+
+# Theme Tokens #
+if is_dark:
+    bg_app = "#141312"
+    bg_card = "#1C1B19"
+    bg_elevated = "#23211E"
+    bg_sidebar = "#181715"
+    text_primary = "#EAE5DC"
+    text_secondary = "#A8A095"
+    text_muted = "#736C62"
+    border_color = "#2E2B27"
+    accent_primary = "#E27D5B"
+    accent_hover = "#D46D4B"
+    badge_bg = "#282522"
+    badge_text = "#D6CEC2"
+    btn_bg = "#1F1D1B"
+    btn_border = "#332F2A"
+    btn_text = "#EAE5DC"
+    btn_hover_bg = "#282522"
+    tag_bg = "#23211E"
+    tag_border = "#332F2A"
+    tag_text = "#D6CEC2"
+    status_online_bg = "#132A1B"
+    status_online_text = "#4ADE80"
+    status_online_border = "#1E4A2B"
+    status_offline_bg = "#2F1512"
+    status_offline_text = "#F87171"
+    status_offline_border = "#4F1E19"
+else:
+    bg_app = "#FAF8F5"
+    bg_card = "#FFFFFF"
+    bg_elevated = "#F4EFEA"
+    bg_sidebar = "#F4EFEA"
+    text_primary = "#1F1D1A"
+    text_secondary = "#524E48"
+    text_muted = "#736C64"
+    border_color = "#E5DFD6"
+    accent_primary = "#CC6B49"
+    accent_hover = "#B85837"
+    badge_bg = "#F0EAE1"
+    badge_text = "#5C564E"
+    btn_bg = "#FFFFFF"
+    btn_border = "#DCD5C9"
+    btn_text = "#262422"
+    btn_hover_bg = "#F7F3EE"
+    tag_bg = "#FAF8F5"
+    tag_border = "#DCD5C9"
+    tag_text = "#4A4640"
+    status_online_bg = "#F1F8F3"
+    status_online_text = "#1E6B37"
+    status_online_border = "#CFE7D6"
+    status_offline_bg = "#FDF2F0"
+    status_offline_text = "#A32D19"
+    status_offline_border = "#F8D0C9"
+
 # Custom Design & Editorial CSS Styling #
 st.markdown(
-    """
+    f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     
     /* Global Base */
-    html, body, [class*="css"] {
+    html, body, [class*="css"], .stApp {{
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #262422;
-        background-color: #FAF8F5;
-    }
+        color: {text_primary} !important;
+        background-color: {bg_app} !important;
+    }}
 
     /* Top Navigation / App Banner */
-    .top-nav {
+    .top-nav {{
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0.75rem 0 1.25rem 0;
-        border-bottom: 1px solid #E8E2D8;
+        border-bottom: 1px solid {border_color};
         margin-bottom: 1.5rem;
-    }
-    .org-brand {
+    }}
+    .org-brand {{
         display: flex;
         flex-direction: column;
-    }
-    .org-title {
+    }}
+    .org-title {{
         font-family: 'Source Serif 4', 'Newsreader', Georgia, serif;
         font-size: 1.55rem;
         font-weight: 600;
         letter-spacing: -0.02em;
-        color: #1F1D1A;
+        color: {text_primary} !important;
         margin: 0;
-    }
-    .org-subtitle {
+    }}
+    .org-subtitle {{
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 0.8125rem;
-        color: #736C64;
+        color: {text_muted} !important;
         font-weight: 500;
         margin-top: 0.2rem;
         letter-spacing: 0.01em;
-    }
+    }}
 
     /* Status Indicators */
-    .status-container {
+    .status-container {{
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
@@ -88,192 +148,192 @@ st.markdown(
         font-size: 0.75rem;
         font-weight: 600;
         font-family: 'JetBrains Mono', monospace;
-    }
-    .status-online {
-        background-color: #F1F8F3;
-        color: #1E6B37;
-        border: 1px solid #CFE7D6;
-    }
-    .status-offline {
-        background-color: #FDF2F0;
-        color: #A32D19;
-        border: 1px solid #F8D0C9;
-    }
-    .indicator-dot {
+    }}
+    .status-online {{
+        background-color: {status_online_bg};
+        color: {status_online_text} !important;
+        border: 1px solid {status_online_border};
+    }}
+    .status-offline {{
+        background-color: {status_offline_bg};
+        color: {status_offline_text} !important;
+        border: 1px solid {status_offline_border};
+    }}
+    .indicator-dot {{
         width: 6px;
         height: 6px;
         border-radius: 50%;
         display: inline-block;
-    }
-    .dot-green { background-color: #2EA857; }
-    .dot-red { background-color: #D63923; }
+    }}
+    .dot-green {{ background-color: #2EA857; }}
+    .dot-red {{ background-color: #D63923; }}
 
     /* Anthropic Warm Editorial Hero Panel */
-    .hero-panel {
-        background: #F4EFEA;
-        border: 1px solid #E5DFD6;
+    .hero-panel {{
+        background: {bg_elevated};
+        border: 1px solid {border_color};
         border-radius: 10px;
         padding: 1.5rem 1.75rem;
         margin-bottom: 1.5rem;
-    }
-    .hero-headline {
+    }}
+    .hero-headline {{
         font-family: 'Source Serif 4', 'Newsreader', Georgia, serif;
         font-size: 1.35rem;
         font-weight: 600;
-        color: #1F1D1A;
+        color: {text_primary} !important;
         letter-spacing: -0.015em;
         margin-bottom: 0.4rem;
-    }
-    .hero-copy {
+    }}
+    .hero-copy {{
         font-size: 0.9rem;
-        color: #524E48;
+        color: {text_secondary} !important;
         line-height: 1.6;
-    }
+    }}
 
     /* Policy Category Tags */
-    .tag-grid {
+    .tag-grid {{
         display: flex;
         flex-wrap: wrap;
         gap: 0.45rem;
         margin-top: 0.95rem;
-    }
-    .category-tag {
+    }}
+    .category-tag {{
         font-size: 0.75rem;
         font-weight: 500;
-        background: #FAF8F5;
-        border: 1px solid #DCD5C9;
-        color: #4A4640;
+        background: {tag_bg};
+        border: 1px solid {tag_border};
+        color: {tag_text} !important;
         padding: 0.25rem 0.6rem;
         border-radius: 5px;
-    }
+    }}
 
     /* Section Subheadings */
-    h1, h2, h3, h4, h5, h6, .stSubheader {
+    h1, h2, h3, h4, h5, h6, .stSubheader {{
         font-family: 'Source Serif 4', 'Newsreader', Georgia, serif !important;
-        color: #1F1D1A !important;
+        color: {text_primary} !important;
         font-weight: 600 !important;
         letter-spacing: -0.015em !important;
-    }
+    }}
 
     /* Source Citation Footnotes */
-    .citations-card {
+    .citations-card {{
         margin-top: 0.85rem;
         padding: 0.75rem 1rem;
-        background: #FFFFFF;
-        border: 1px solid #E8E2D8;
-        border-left: 3px solid #CC6B49;
+        background: {bg_card};
+        border: 1px solid {border_color};
+        border-left: 3px solid {accent_primary};
         border-radius: 6px;
-    }
-    .citations-header {
+    }}
+    .citations-header {{
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #736C64;
+        color: {text_muted} !important;
         margin-bottom: 0.45rem;
-    }
-    .citation-item {
+    }}
+    .citation-item {{
         display: inline-flex;
         align-items: center;
         font-size: 0.8125rem;
-        color: #262422;
-        background: #FAF8F5;
-        border: 1px solid #E5DFD6;
+        color: {text_primary} !important;
+        background: {bg_elevated};
+        border: 1px solid {border_color};
         padding: 0.25rem 0.6rem;
         border-radius: 4px;
         margin: 0.15rem 0.35rem 0.15rem 0;
         font-family: 'JetBrains Mono', monospace;
-    }
-    .citation-doc {
+    }}
+    .citation-doc {{
         font-weight: 600;
-        color: #B25232;
-    }
-    .citation-section {
-        color: #5C564E;
+        color: {accent_primary} !important;
+    }}
+    .citation-section {{
+        color: {text_secondary} !important;
         margin-left: 0.35rem;
-    }
+    }}
 
     /* Sidebar Styling */
-    [data-testid="stSidebar"] {
-        background-color: #F4EFEA !important;
-        border-right: 1px solid #E5DFD6;
-    }
-    .sidebar-doc-row {
+    [data-testid="stSidebar"] {{
+        background-color: {bg_sidebar} !important;
+        border-right: 1px solid {border_color} !important;
+    }}
+    .sidebar-doc-row {{
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0.45rem 0.65rem;
-        background: #FFFFFF;
-        border: 1px solid #E5DFD6;
+        background: {bg_card};
+        border: 1px solid {border_color};
         border-radius: 5px;
         margin-bottom: 0.35rem;
         font-size: 0.8rem;
-    }
-    .doc-type-badge {
+    }}
+    .doc-type-badge {{
         font-size: 0.65rem;
         font-family: 'JetBrains Mono', monospace;
-        background: #F0EAE1;
-        color: #5C564E;
+        background: {badge_bg};
+        color: {badge_text} !important;
         padding: 0.15rem 0.35rem;
         border-radius: 3px;
         font-weight: 600;
-    }
-    .stat-box {
-        background: #FFFFFF;
-        border: 1px solid #E5DFD6;
+    }}
+    .stat-box {{
+        background: {bg_card};
+        border: 1px solid {border_color};
         border-radius: 6px;
         padding: 0.75rem;
         margin-bottom: 0.75rem;
-    }
-    .stat-label {
+    }}
+    .stat-label {{
         font-size: 0.7rem;
         text-transform: uppercase;
         font-weight: 600;
-        color: #736C64;
+        color: {text_muted} !important;
         letter-spacing: 0.05em;
-    }
-    .stat-value {
+    }}
+    .stat-value {{
         font-family: 'Source Serif 4', serif;
         font-size: 1.25rem;
         font-weight: 600;
-        color: #1F1D1A;
+        color: {text_primary} !important;
         margin-top: 0.15rem;
-    }
+    }}
 
     /* Chat Messages Styling */
-    .stChatMessage {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E8E2D8 !important;
+    .stChatMessage {{
+        background-color: {bg_card} !important;
+        border: 1px solid {border_color} !important;
         border-radius: 8px !important;
         padding: 1rem !important;
         margin-bottom: 0.75rem !important;
-    }
+    }}
 
     /* Buttons */
-    div.stButton > button {
-        background-color: #FFFFFF;
-        border: 1px solid #DCD5C9;
-        color: #262422;
+    div.stButton > button {{
+        background-color: {btn_bg} !important;
+        border: 1px solid {btn_border} !important;
+        color: {btn_text} !important;
         border-radius: 6px;
         font-weight: 500;
         font-size: 0.875rem;
         transition: all 0.15s ease-in-out;
-    }
-    div.stButton > button:hover {
-        background-color: #F7F3EE;
-        border-color: #CC6B49;
-        color: #B25232;
-    }
-    div.stButton > button[kind="primary"] {
-        background-color: #CC6B49;
-        border: 1px solid #B25232;
-        color: #FFFFFF;
-    }
-    div.stButton > button[kind="primary"]:hover {
-        background-color: #B85837;
-        border-color: #9E4628;
-        color: #FFFFFF;
-    }
+    }}
+    div.stButton > button:hover {{
+        background-color: {btn_hover_bg} !important;
+        border-color: {accent_primary} !important;
+        color: {accent_primary} !important;
+    }}
+    div.stButton > button[kind="primary"] {{
+        background-color: {accent_primary} !important;
+        border: 1px solid {accent_primary} !important;
+        color: #FFFFFF !important;
+    }}
+    div.stButton > button[kind="primary"]:hover {{
+        background-color: {accent_hover} !important;
+        border-color: {accent_hover} !important;
+        color: #FFFFFF !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -539,6 +599,13 @@ with st.sidebar:
             st.session_state.show_hr_dialog_requested = {"subject": "General HR Inquiry", "message": ""}
             st.rerun()
 
+    # Theme Mode Selector Toggle
+    st.markdown("---")
+    dark_val = st.toggle("🌙 Dark Mode", value=is_dark, key="sidebar_dark_toggle")
+    if dark_val != is_dark:
+        st.session_state.dark_mode = dark_val
+        st.rerun()
+
 
 # Modal Dialog 1: Support Ticket Confirmation Receipt #
 @st.dialog("Support Ticket Confirmation", width="medium")
@@ -550,12 +617,17 @@ def show_ticket_receipt_dialog(ticket: dict):
     created_at = ticket.get("created_at", "")[:19].replace("T", " ")
     email_dest = "Anonymous (Confidential)" if ticket.get("is_anonymous") else ticket.get("employee_email", "employee@company.com")
 
+    card_bg = "#23211E" if is_dark else "#F4EFEA"
+    card_border = "#332F2A" if is_dark else "#E5DFD6"
+    sub_color = "#9C9488" if is_dark else "#736C64"
+    status_text = "#4ADE80" if is_dark else "#1E6B37"
+
     st.markdown(
         f"""
-        <div style="background: #F4EFEA; border: 1px solid #E5DFD6; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; text-align: center;">
-            <div style="font-size: 0.75rem; font-weight: 600; color: #736C64; text-transform: uppercase; letter-spacing: 0.05em;">Official HR Reference Number</div>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 700; color: #1E6B37; margin: 0.4rem 0;">{ticket_id}</div>
-            <div style="font-size: 0.8rem; color: #524C44;">Status: <span style="font-weight: 600; color: #1E6B37;">Open — Assigned to HR Operations Team</span></div>
+        <div style="background: {card_bg}; border: 1px solid {card_border}; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; text-align: center;">
+            <div style="font-size: 0.75rem; font-weight: 600; color: {sub_color}; text-transform: uppercase; letter-spacing: 0.05em;">Official HR Reference Number</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 700; color: {status_text}; margin: 0.4rem 0;">{ticket_id}</div>
+            <div style="font-size: 0.8rem; color: {sub_color};">Status: <span style="font-weight: 600; color: {status_text};">Open — Assigned to HR Operations Team</span></div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -703,14 +775,20 @@ if is_online:
 else:
     status_indicator_html = '<div class="status-container status-offline"><span class="indicator-dot dot-red"></span><span>DISCONNECTED | BACKEND UNREACHABLE</span></div>'
 
-col_brand, col_top_right = st.columns([5, 3], vertical_alignment="center")
+col_brand, col_top_right = st.columns([4.5, 3.5], vertical_alignment="center")
 with col_brand:
     st.markdown(
         '<div class="org-brand"><h1 class="org-title">Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
         unsafe_allow_html=True,
     )
 with col_top_right:
-    c_info_btn, c_stat_badge = st.columns([1, 2], vertical_alignment="center")
+    c_theme_btn, c_info_btn, c_stat_badge = st.columns([1.1, 1, 2], vertical_alignment="center")
+    with c_theme_btn:
+        theme_label = "Dark" if not is_dark else "Light"
+        theme_icon = ":material/dark_mode:" if not is_dark else ":material/light_mode:"
+        if st.button(theme_label, icon=theme_icon, help="Toggle between Light and Dark mode", use_container_width=True):
+            st.session_state.dark_mode = not is_dark
+            st.rerun()
     with c_info_btn:
         if st.button("About", icon=":material/info:", help="Click to view overview, capabilities, and user guide", use_container_width=True):
             show_about_dialog()
@@ -868,11 +946,15 @@ for idx, message in enumerate(st.session_state.messages):
                     st.markdown(f"- **`{doc_name}`**{page_str} - Section: **{sec}**{topic_str}")
 
         if message["role"] == "assistant" and message.get("needs_hr"):
+            hr_bg = "#26211C" if is_dark else "#FBF6EE"
+            hr_bd = "#423629" if is_dark else "#EADBCE"
+            hr_t1 = "#E2A96D" if is_dark else "#6D4C28"
+            hr_t2 = "#C4A57F" if is_dark else "#8A6D4B"
             st.markdown(
-                """
-                <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
-                    <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
-                    <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
+                f"""
+                <div style="background-color: {hr_bg}; border: 1px solid {hr_bd}; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; color: {hr_t1};">Need official HR assistance on this matter?</div>
+                    <div style="font-size: 0.8rem; color: {hr_t2}; margin-top: 0.1rem;">
                         This topic may require policy exception approval, confidential review, or direct HR confirmation.
                     </div>
                 </div>
@@ -934,11 +1016,15 @@ if query_to_run:
             needs_hr = is_sensitive_or_unresolved(query_to_run, answer_text)
 
             if needs_hr:
+                hr_bg = "#26211C" if is_dark else "#FBF6EE"
+                hr_bd = "#423629" if is_dark else "#EADBCE"
+                hr_t1 = "#E2A96D" if is_dark else "#6D4C28"
+                hr_t2 = "#C4A57F" if is_dark else "#8A6D4B"
                 st.markdown(
-                    """
-                    <div style="background-color: #FBF6EE; border: 1px solid #EADBCE; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
-                        <div style="font-weight: 600; font-size: 0.85rem; color: #6D4C28;">Need official HR assistance on this matter?</div>
-                        <div style="font-size: 0.8rem; color: #8A6D4B; margin-top: 0.1rem;">
+                    f"""
+                    <div style="background-color: {hr_bg}; border: 1px solid {hr_bd}; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.6rem; margin-bottom: 0.4rem;">
+                        <div style="font-weight: 600; font-size: 0.85rem; color: {hr_t1};">Need official HR assistance on this matter?</div>
+                        <div style="font-size: 0.8rem; color: {hr_t2}; margin-top: 0.1rem;">
                             This topic may require policy exception approval, confidential review, or direct HR confirmation.
                         </div>
                     </div>
