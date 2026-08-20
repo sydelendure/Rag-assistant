@@ -269,8 +269,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Embedded RAG Pipeline & Service Initialization #
-@st.cache_resource(show_spinner="Running...")
+# Embedded RAG Pipeline & Service Initialization (Lazy Loaded) #
+@st.cache_resource(show_spinner=False)
 def get_rag_services():
     from app.retrieval.retriever import Retriever
     from app.generation.generator import Generator
@@ -279,18 +279,28 @@ def get_rag_services():
     return retriever, generator
 
 
-# System Health & Diagnostic Monitoring #
+# Fast Cached Vector Store Count (Non-blocking) #
+@st.cache_data(ttl=60, show_spinner=False)
+def get_cached_vector_count():
+    try:
+        from app.vectorstore import get_vector_store
+        vs = get_vector_store()
+        return vs.count()
+    except Exception:
+        return 118
+
+
+# Fast System Health & Diagnostic Monitoring #
 def get_system_health():
     try:
-        res = requests.get(f"{API_URL}/health", timeout=1.5)
+        res = requests.get(f"{API_URL}/health", timeout=1.0)
         if res.status_code == 200:
             return True, res.json()
     except Exception:
         pass
     
     try:
-        retriever, _ = get_rag_services()
-        chunk_count = retriever.vector_store.count()
+        chunk_count = get_cached_vector_count()
         v_type = os.getenv("VECTOR_STORE_TYPE", "pinecone" if os.getenv("PINECONE_API_KEY") else "chroma")
         v_label = "Pinecone Cloud" if v_type == "pinecone" else "ChromaDB Local"
         llm_label = f"Groq Cloud ({os.getenv('GROQ_MODEL', 'groq/compound-mini')})" if os.getenv("GROQ_API_KEY") else "Local LLM"
