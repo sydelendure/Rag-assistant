@@ -681,19 +681,19 @@ def show_about_dialog():
 
 # Check if ticket receipt dialog was triggered #
 if st.session_state.get("active_ticket_receipt"):
-    t_receipt = st.session_state.pop("active_ticket_receipt")
-    show_ticket_receipt_dialog(t_receipt)
+    try:
+        t_receipt = st.session_state.pop("active_ticket_receipt")
+        show_ticket_receipt_dialog(t_receipt)
+    except Exception:
+        pass
 
 # Check if HR contact dialog was triggered #
 elif st.session_state.get("show_hr_dialog_requested"):
-    req_info = st.session_state.pop("show_hr_dialog_requested")
-    show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
-
-
-# Auto Pop-up on First Application Load #
-if "has_seen_intro" not in st.session_state:
-    st.session_state.has_seen_intro = True
-    show_about_dialog()
+    try:
+        req_info = st.session_state.pop("show_hr_dialog_requested")
+        show_hr_ticket_dialog(prefill_subject=req_info.get("subject", ""), prefill_message=req_info.get("message", ""))
+    except Exception:
+        pass
 
 
 # Main Application Navigation Header #
