@@ -444,6 +444,18 @@ with st.sidebar:
     st.markdown("### Policy Hub & Operations")
     st.caption("Internal Governance & Policy Directory")
 
+    # Prominent Light / Dark Mode Switcher
+    theme_choice = st.radio(
+        "Theme",
+        options=["☀️ Light Mode", "🌙 Dark Mode"],
+        index=1 if is_dark else 0,
+        horizontal=True,
+        label_visibility="collapsed"
+    )
+    if (theme_choice == "🌙 Dark Mode") != is_dark:
+        st.session_state.dark_mode = (theme_choice == "🌙 Dark Mode")
+        st.rerun()
+
     # Diagnostics Box
     st.markdown("---")
     st.markdown("**System Diagnostics**")
