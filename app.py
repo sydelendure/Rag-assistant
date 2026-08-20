@@ -24,6 +24,10 @@ except Exception:
 # Global Configuration & Paths #
 API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 DOCUMENTS_DIR = Path("documents")
+SUPPORTED_EXTS = {
+    ".pdf", ".csv", ".xlsx", ".xls", ".docx", ".doc", ".txt", ".md",
+    ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".bmp"
+}
 
 # Custom Design & Editorial CSS Styling #
 st.markdown(
