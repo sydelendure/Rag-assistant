@@ -1,5 +1,11 @@
-# Imports & Standard Libraries #
+# Environment Performance Optimization Flags #
 import os
+os.environ["STREAMLIT_SERVER_FILE_WATCHER_TYPE"] = "none"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["TRANSFORMERS_NO_ADVISORY_WARNINGS"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+# Imports & Standard Libraries #
 from pathlib import Path
 import requests
 import streamlit as st
