@@ -502,6 +502,8 @@ with st.sidebar:
     vector_engine_label = health_data.get("vector_engine", "ChromaDB Local")
     st.caption(f"**LLM:** {llm_engine_name}")
     st.caption(f"**DB:** {vector_engine_label}")
+    if st.button("System Overview", icon=":material/info:", use_container_width=True, help="View architecture and capabilities"):
+        show_about_dialog()
 
     if not is_online:
         st.warning(
@@ -795,27 +797,20 @@ if is_online:
 else:
     status_indicator_html = '<div class="status-container status-offline"><span class="indicator-dot dot-red"></span><span>DISCONNECTED | BACKEND UNREACHABLE</span></div>'
 
-col_brand, col_top_right = st.columns([4.5, 3.5], vertical_alignment="center")
+col_brand, col_theme = st.columns([5, 1.6], vertical_alignment="center")
 with col_brand:
     st.markdown(
-        '<div class="org-brand"><h1 class="org-title">Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
+        f'<div class="org-brand"><h1 class="org-title">{"🌘" if is_dark else "🏢"} Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
         unsafe_allow_html=True,
     )
-with col_top_right:
-    c_theme_btn, c_info_btn, c_stat_badge = st.columns([1.1, 1, 2], vertical_alignment="center")
-    with c_theme_btn:
-        theme_label = "Dark" if not is_dark else "Light"
-        theme_icon = ":material/dark_mode:" if not is_dark else ":material/light_mode:"
-        if st.button(theme_label, icon=theme_icon, help="Toggle between Light and Dark mode", use_container_width=True):
-            st.session_state.dark_mode = not is_dark
-            st.rerun()
-    with c_info_btn:
-        if st.button("About", icon=":material/info:", help="Click to view overview, capabilities, and user guide", use_container_width=True):
-            show_about_dialog()
-    with c_stat_badge:
-        st.markdown(status_indicator_html, unsafe_allow_html=True)
+with col_theme:
+    theme_label = "🌙 Dark Mode" if not is_dark else "☀️ Light Mode"
+    if st.button(theme_label, key="single_app_theme_toggle", help="Toggle Light / Dark mode", use_container_width=True):
+        st.session_state.dark_mode = not is_dark
+        st.rerun()
 
-st.markdown('<div style="border-bottom: 1px solid #E8E2D8; margin-bottom: 1.25rem; margin-top: 0.5rem;"></div>', unsafe_allow_html=True)
+st.markdown(f'<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; margin-top: 0.25rem;"><div>{status_indicator_html}</div></div>', unsafe_allow_html=True)
+st.markdown('<div style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 1.25rem;"></div>', unsafe_allow_html=True)
 
 # Document Scope Selector Dropdown #
 available_docs = ["All Documents"]
