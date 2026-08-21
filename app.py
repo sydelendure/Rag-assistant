@@ -12,7 +12,7 @@ import streamlit as st
 
 # Streamlit Page Configuration (MUST BE FIRST) #
 st.set_page_config(
-    page_title="Employee Policy Assistant",
+    page_title="Employee Policy & Knowledge Assistant",
     page_icon=":material/corporate_fare:",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -663,11 +663,11 @@ def show_hr_ticket_dialog(prefill_subject: str = "", prefill_message: str = ""):
 
 
 # Modal Dialog 3: System Overview & Capabilities Dialog #
-@st.dialog("About Employee Policy Assistant", width="medium")
+@st.dialog("About Employee Policy & Knowledge Assistant", width="medium")
 def show_about_dialog():
     st.markdown(
         """
-        ### Employee Policy Assistant
+        ### Employee Policy & Knowledge Assistant
         An AI-powered knowledge assistant providing verified answers to company policies, employee benefits, and compliance questions with exact citations.
 
         ---
@@ -714,7 +714,7 @@ else:
 col_brand, col_top_right = st.columns([5, 3], vertical_alignment="center")
 with col_brand:
     st.markdown(
-        '<div class="org-brand"><h1 class="org-title">Employee Policy Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
+        '<div class="org-brand"><h1 class="org-title">Employee Policy & Knowledge Assistant</h1><div class="org-subtitle">Enterprise Retrieval-Augmented Generation (RAG) System</div></div>',
         unsafe_allow_html=True,
     )
 with col_top_right:

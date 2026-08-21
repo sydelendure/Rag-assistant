@@ -68,7 +68,7 @@ class Generator:
 
         # System Prompt & Instructions #
         system_instruction = (
-            "You are the official Employee Policy Assistant. "
+            "You are the official Employee Policy & Knowledge Assistant. "
             "Answer the question factually and directly in 1-2 clear sentences based strictly on the provided policy context. "
             "Do not include citations, section numbers, or document names in the prose. "
             "Do not explain your reasoning or include thinking steps. Output only the direct answer."
@@ -175,7 +175,7 @@ DIRECT ANSWER:"""
 
         # System Prompt #
         system_instruction = (
-            "You are the official Employee Policy Assistant. "
+            "You are the official Employee Policy & Knowledge Assistant. "
             "Answer the question factually and directly in 1-2 clear sentences based strictly on the provided policy context. "
             "Do not include citations, section numbers, or document names in the prose. "
             "Do not explain your reasoning or include thinking steps. Output only the direct answer."
