@@ -282,6 +282,14 @@ st.markdown(
 # Embedded RAG Pipeline & Service Initialization (Lazy Loaded) #
 @st.cache_resource(show_spinner=False)
 def get_rag_services():
+    try:
+        if hasattr(st, "secrets"):
+            for k in ["GROQ_API_KEY", "PINECONE_API_KEY", "PINECONE_INDEX", "PINECONE_ENVIRONMENT", "USE_PINECONE", "HF_TOKEN"]:
+                if k in st.secrets and st.secrets[k]:
+                    os.environ[k] = str(st.secrets[k])
+    except Exception:
+        pass
+
     from app.retrieval.retriever import Retriever
     from app.generation.generator import Generator
     retriever = Retriever()
