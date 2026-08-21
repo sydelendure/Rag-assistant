@@ -471,18 +471,6 @@ with st.sidebar:
     st.markdown("### Policy Hub & Operations")
     st.caption("Internal Governance & Policy Directory")
 
-    # Prominent Light / Dark Mode Switcher
-    theme_choice = st.radio(
-        "Theme",
-        options=["☀️ Light Mode", "🌙 Dark Mode"],
-        index=1 if is_dark else 0,
-        horizontal=True,
-        label_visibility="collapsed"
-    )
-    if (theme_choice == "🌙 Dark Mode") != is_dark:
-        st.session_state.dark_mode = (theme_choice == "🌙 Dark Mode")
-        st.rerun()
-
     # Diagnostics Box
     st.markdown("---")
     st.markdown("**System Diagnostics**")
@@ -637,13 +625,6 @@ with st.sidebar:
         if st.button("HR Help", icon=":material/support_agent:", help="Contact HR / Raise a confidential ticket", use_container_width=True):
             st.session_state.show_hr_dialog_requested = {"subject": "General HR Inquiry", "message": ""}
             st.rerun()
-
-    # Theme Mode Selector Toggle
-    st.markdown("---")
-    dark_val = st.toggle("🌙 Dark Mode", value=is_dark, key="sidebar_dark_toggle")
-    if dark_val != is_dark:
-        st.session_state.dark_mode = dark_val
-        st.rerun()
 
 
 # Modal Dialog 1: Support Ticket Confirmation Receipt #
@@ -836,24 +817,17 @@ with col_top_right:
 
 st.markdown('<div style="border-bottom: 1px solid #E8E2D8; margin-bottom: 1.25rem; margin-top: 0.5rem;"></div>', unsafe_allow_html=True)
 
-# Document Scope Selector Dropdown & Theme Control Bar #
+# Document Scope Selector Dropdown #
 available_docs = ["All Documents"]
 if DOCUMENTS_DIR.exists():
     available_docs += sorted([p.name for p in DOCUMENTS_DIR.glob("*.*") if p.suffix.lower() in SUPPORTED_EXTS])
 
-col_scope_sel, col_mode_toggle = st.columns([3.2, 1.2], vertical_alignment="bottom")
-with col_scope_sel:
-    selected_scope = st.selectbox(
-        "Knowledge Base Scope",
-        options=available_docs,
-        index=0,
-        help="Target your query strictly to a specific document or search across the entire knowledge base.",
-    )
-with col_mode_toggle:
-    theme_btn_text = "🌙 Dark Theme" if not is_dark else "☀️ Light Theme"
-    if st.button(theme_btn_text, key="main_scope_theme_toggle", use_container_width=True, help="Switch between Light and Dark mode"):
-        st.session_state.dark_mode = not is_dark
-        st.rerun()
+selected_scope = st.selectbox(
+    "Knowledge Base Scope",
+    options=available_docs,
+    index=0,
+    help="Target your query strictly to a specific document or search across the entire knowledge base.",
+)
 
 # Session State Initialization #
 if "messages" not in st.session_state:
