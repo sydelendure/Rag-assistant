@@ -36,14 +36,16 @@ SUPPORTED_EXTS = {
 }
 
 # Theme State Initialization #
-# Theme State Initialization #
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 
 is_dark = st.session_state.dark_mode
 
-# Theme Tokens #
+# Theme Tokens & Typography Hierarchy #
 if is_dark:
+    # Dark Mode Design (darkmodedesign.com inspired)
+    font_headings = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+    font_body = "'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
     bg_app = "#0B0C0E"
     bg_card = "#14161A"
     bg_elevated = "#1C1F24"
@@ -72,6 +74,9 @@ if is_dark:
     status_offline_border = "rgba(239, 68, 68, 0.35)"
     input_bg = "#16191E"
 else:
+    # Original Warm Editorial Light Mode (Anthropic Style)
+    font_headings = "'Source Serif 4', 'Newsreader', Georgia, serif"
+    font_body = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     bg_app = "#FAF8F5"
     bg_card = "#FFFFFF"
     bg_elevated = "#F4EFEA"
@@ -104,21 +109,21 @@ else:
 st.markdown(
     f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     
     /* Comprehensive Global Canvas & Layout */
     html, body, [class*="css"], .stApp,
     [data-testid="stAppViewContainer"],
     [data-testid="stAppViewBlockContainer"],
     .main, .block-container {{
-        font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        font-family: {font_body} !important;
         color: {text_primary} !important;
         background-color: {bg_app} !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }}
 
-    /* Streamlit Header & Toolbar Fix */
+    /* Streamlit Header & Toolbar */
     header[data-testid="stHeader"],
     [data-testid="stToolbar"],
     [data-testid="stDecoration"] {{
@@ -148,7 +153,7 @@ st.markdown(
     [data-testid="stChatInputTextArea"] {{
         background-color: {input_bg} !important;
         color: {text_primary} !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: {font_body} !important;
     }}
     [data-testid="stChatInputTextArea"]::placeholder {{
         color: {text_secondary} !important;
@@ -161,18 +166,18 @@ st.markdown(
         flex-direction: column;
     }}
     .org-title {{
-        font-family: 'Inter', sans-serif;
+        font-family: {font_headings} !important;
         font-size: 1.65rem;
         font-weight: 700;
-        letter-spacing: -0.035em;
+        letter-spacing: -0.025em;
         color: {text_primary} !important;
         margin: 0;
     }}
     .org-subtitle {{
-        font-family: 'Inter', sans-serif;
+        font-family: {font_body} !important;
         font-size: 0.85rem;
         color: {text_secondary} !important;
-        font-weight: 400;
+        font-weight: 500;
         margin-top: 0.25rem;
         letter-spacing: -0.01em;
     }}
@@ -183,8 +188,8 @@ st.markdown(
         align-items: center;
         gap: 0.45rem;
         padding: 0.35rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.725rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
         font-weight: 600;
         font-family: 'JetBrains Mono', monospace;
         letter-spacing: 0.02em;
@@ -208,12 +213,12 @@ st.markdown(
     .dot-green {{ background-color: #22C55E; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }}
     .dot-red {{ background-color: #EF4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }}
 
-    /* Dark Mode Design Hero Panel */
+    /* Hero Panel */
     .hero-panel {{
         background: {bg_elevated};
         border: 1px solid {border_color};
-        border-radius: 12px;
-        padding: 1.6rem 1.85rem;
+        border-radius: 10px;
+        padding: 1.5rem 1.75rem;
         margin-bottom: 1.5rem;
         transition: border-color 0.2s ease;
     }}
@@ -221,18 +226,17 @@ st.markdown(
         border-color: {border_hover};
     }}
     .hero-headline {{
-        font-family: 'Inter', sans-serif;
-        font-size: 1.4rem;
-        font-weight: 700;
+        font-family: {font_headings} !important;
+        font-size: 1.35rem;
+        font-weight: 600;
         color: {text_primary} !important;
-        letter-spacing: -0.03em;
+        letter-spacing: -0.015em;
         margin-bottom: 0.4rem;
     }}
     .hero-copy {{
-        font-size: 0.925rem;
+        font-size: 0.9rem;
         color: {text_secondary} !important;
-        line-height: 1.65;
-        letter-spacing: -0.01em;
+        line-height: 1.6;
     }}
 
     /* Policy Category Tags */
@@ -248,8 +252,8 @@ st.markdown(
         background: {tag_bg};
         border: 1px solid {tag_border};
         color: {tag_text} !important;
-        padding: 0.3rem 0.7rem;
-        border-radius: 9999px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 5px;
         transition: all 0.15s ease;
     }}
     .category-tag:hover {{
@@ -259,38 +263,38 @@ st.markdown(
 
     /* Section Subheadings */
     h1, h2, h3, h4, h5, h6, .stSubheader {{
-        font-family: 'Inter', sans-serif !important;
+        font-family: {font_headings} !important;
         color: {text_primary} !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.03em !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.015em !important;
     }}
 
     /* Source Citation Footnotes */
     .citations-card {{
         margin-top: 0.85rem;
-        padding: 0.85rem 1rem;
+        padding: 0.75rem 1rem;
         background: {bg_card};
         border: 1px solid {border_color};
         border-left: 3px solid {accent_primary};
-        border-radius: 8px;
+        border-radius: 6px;
     }}
     .citations-header {{
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
         color: {text_secondary} !important;
         margin-bottom: 0.45rem;
     }}
     .citation-item {{
         display: inline-flex;
         align-items: center;
-        font-size: 0.8rem;
+        font-size: 0.8125rem;
         color: {text_primary} !important;
         background: {bg_elevated};
         border: 1px solid {border_color};
-        padding: 0.25rem 0.65rem;
-        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
         margin: 0.15rem 0.35rem 0.15rem 0;
         font-family: 'JetBrains Mono', monospace;
     }}
@@ -303,7 +307,7 @@ st.markdown(
         margin-left: 0.35rem;
     }}
 
-    /* Sidebar Full Visibility & High Contrast */
+    /* Sidebar High Contrast & Clean Hierarchy */
     [data-testid="stSidebar"],
     [data-testid="stSidebarContent"],
     [data-testid="stSidebarUserContent"],
@@ -318,7 +322,7 @@ st.markdown(
     [data-testid="stSidebar"] strong,
     [data-testid="stSidebar"] label {{
         color: {text_primary} !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: {font_body} !important;
     }}
     [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] span,
@@ -330,12 +334,12 @@ st.markdown(
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.5rem 0.75rem;
+        padding: 0.45rem 0.65rem;
         background: {bg_card};
         border: 1px solid {border_color};
-        border-radius: 8px;
-        margin-bottom: 0.4rem;
-        font-size: 0.825rem;
+        border-radius: 5px;
+        margin-bottom: 0.35rem;
+        font-size: 0.8rem;
         transition: border-color 0.15s ease;
     }}
     .sidebar-doc-row:hover {{
@@ -350,15 +354,15 @@ st.markdown(
         font-family: 'JetBrains Mono', monospace;
         background: {badge_bg};
         color: {badge_text} !important;
-        padding: 0.15rem 0.45rem;
-        border-radius: 4px;
+        padding: 0.15rem 0.35rem;
+        border-radius: 3px;
         font-weight: 600;
     }}
     .stat-box {{
         background: {bg_card};
         border: 1px solid {border_color};
-        border-radius: 8px;
-        padding: 0.85rem;
+        border-radius: 6px;
+        padding: 0.75rem;
         margin-bottom: 0.75rem;
         transition: border-color 0.15s ease;
     }}
@@ -366,19 +370,18 @@ st.markdown(
         border-color: {border_hover};
     }}
     .stat-label {{
-        font-size: 0.675rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        font-weight: 700;
+        font-weight: 600;
         color: {text_secondary} !important;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
     }}
     .stat-value {{
-        font-family: 'Inter', sans-serif;
-        font-size: 1.3rem;
-        font-weight: 700;
-        letter-spacing: -0.03em;
+        font-family: {font_headings} !important;
+        font-size: 1.25rem;
+        font-weight: 600;
         color: {text_primary} !important;
-        margin-top: 0.2rem;
+        margin-top: 0.15rem;
     }}
 
     /* Selectbox Styling */
@@ -390,17 +393,16 @@ st.markdown(
         background-color: {bg_card} !important;
         border: 1px solid {border_color} !important;
         color: {text_primary} !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
     }}
 
     /* Chat Messages Styling */
     .stChatMessage {{
         background-color: {bg_card} !important;
         border: 1px solid {border_color} !important;
-        border-radius: 12px !important;
-        padding: 1.1rem !important;
-        margin-bottom: 0.85rem !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
+        margin-bottom: 0.75rem !important;
     }}
     .stChatMessage p, .stChatMessage span {{
         color: {text_primary} !important;
@@ -411,16 +413,15 @@ st.markdown(
         background-color: {btn_bg} !important;
         border: 1px solid {btn_border} !important;
         color: {btn_text} !important;
-        border-radius: 8px;
+        border-radius: 6px;
         font-weight: 500;
         font-size: 0.875rem;
-        letter-spacing: -0.01em;
         transition: all 0.15s ease-in-out;
     }}
     div.stButton > button:hover {{
         background-color: {btn_hover_bg} !important;
         border-color: {border_hover} !important;
-        color: {text_primary} !important;
+        color: {'#FFFFFF' if is_dark else '#B25232'} !important;
     }}
     div.stButton > button[kind="primary"] {{
         background-color: {'#FFFFFF' if is_dark else '#CC6B49'} !important;
