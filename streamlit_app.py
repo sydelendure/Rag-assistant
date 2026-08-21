@@ -36,39 +36,41 @@ SUPPORTED_EXTS = {
 }
 
 # Theme State Initialization #
+# Theme State Initialization #
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 
 is_dark = st.session_state.dark_mode
 
-# Theme Tokens (Inspired by darkmodedesign.com) #
+# Theme Tokens #
 if is_dark:
-    bg_app = "#000000"
-    bg_card = "#0C0C0D"
-    bg_elevated = "#121316"
-    bg_sidebar = "#080809"
-    text_primary = "#FFFFFF"
-    text_secondary = "#9E9E9E"
-    text_muted = "#707070"
-    border_color = "rgba(255, 255, 255, 0.08)"
-    border_hover = "rgba(255, 255, 255, 0.22)"
+    bg_app = "#0B0C0E"
+    bg_card = "#14161A"
+    bg_elevated = "#1C1F24"
+    bg_sidebar = "#111317"
+    text_primary = "#F3F4F6"
+    text_secondary = "#9CA3AF"
+    text_muted = "#9CA3AF"
+    border_color = "rgba(255, 255, 255, 0.12)"
+    border_hover = "rgba(255, 255, 255, 0.3)"
     accent_primary = "#FFFFFF"
-    accent_hover = "#E5E5E5"
-    badge_bg = "rgba(255, 255, 255, 0.06)"
-    badge_text = "#E0E0E0"
-    btn_bg = "#141517"
-    btn_border = "rgba(255, 255, 255, 0.12)"
+    accent_hover = "#E5E7EB"
+    badge_bg = "rgba(255, 255, 255, 0.08)"
+    badge_text = "#E5E7EB"
+    btn_bg = "#1F2329"
+    btn_border = "rgba(255, 255, 255, 0.18)"
     btn_text = "#FFFFFF"
-    btn_hover_bg = "#1F2124"
-    tag_bg = "rgba(255, 255, 255, 0.04)"
-    tag_border = "rgba(255, 255, 255, 0.09)"
-    tag_text = "#CCCCCC"
-    status_online_bg = "rgba(34, 197, 94, 0.1)"
+    btn_hover_bg = "#2B3038"
+    tag_bg = "rgba(255, 255, 255, 0.06)"
+    tag_border = "rgba(255, 255, 255, 0.14)"
+    tag_text = "#E5E7EB"
+    status_online_bg = "rgba(34, 197, 94, 0.15)"
     status_online_text = "#4ADE80"
-    status_online_border = "rgba(34, 197, 94, 0.25)"
-    status_offline_bg = "rgba(239, 68, 68, 0.1)"
+    status_online_border = "rgba(34, 197, 94, 0.35)"
+    status_offline_bg = "rgba(239, 68, 68, 0.15)"
     status_offline_text = "#F87171"
-    status_offline_border = "rgba(239, 68, 68, 0.25)"
+    status_offline_border = "rgba(239, 68, 68, 0.35)"
+    input_bg = "#16191E"
 else:
     bg_app = "#FAF8F5"
     bg_card = "#FFFFFF"
@@ -96,6 +98,7 @@ else:
     status_offline_bg = "#FDF2F0"
     status_offline_text = "#A32D19"
     status_offline_border = "#F8D0C9"
+    input_bg = "#FFFFFF"
 
 # Custom Design & Editorial CSS Styling #
 st.markdown(
@@ -103,31 +106,63 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     
-    /* Global Base & Typography */
-    html, body, [class*="css"], .stApp {{
-        font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Comprehensive Global Canvas & Layout */
+    html, body, [class*="css"], .stApp,
+    [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewBlockContainer"],
+    .main, .block-container {{
+        font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         color: {text_primary} !important;
         background-color: {bg_app} !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }}
 
-    /* Top Navigation / App Banner */
-    .top-nav {{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.85rem 0 1.25rem 0;
-        border-bottom: 1px solid {border_color};
-        margin-bottom: 1.5rem;
+    /* Streamlit Header & Toolbar Fix */
+    header[data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    [data-testid="stDecoration"] {{
+        background-color: {bg_app} !important;
+        color: {text_primary} !important;
     }}
+    header[data-testid="stHeader"] button,
+    header[data-testid="stHeader"] svg {{
+        color: {text_primary} !important;
+        fill: {text_primary} !important;
+    }}
+
+    /* Streamlit Bottom Fixed Footer & Chat Area */
+    [data-testid="stBottom"],
+    [data-testid="stBottomBlockContainer"],
+    [data-testid="stChatInputContainer"] {{
+        background-color: {bg_app} !important;
+    }}
+
+    /* Chat Input Box */
+    [data-testid="stChatInput"],
+    [data-testid="stChatInput"] > div {{
+        background-color: {input_bg} !important;
+        border: 1px solid {border_color} !important;
+        border-radius: 10px !important;
+    }}
+    [data-testid="stChatInputTextArea"] {{
+        background-color: {input_bg} !important;
+        color: {text_primary} !important;
+        font-family: 'Inter', sans-serif !important;
+    }}
+    [data-testid="stChatInputTextArea"]::placeholder {{
+        color: {text_secondary} !important;
+        opacity: 0.8 !important;
+    }}
+
+    /* Top Brand Navigation */
     .org-brand {{
         display: flex;
         flex-direction: column;
     }}
     .org-title {{
         font-family: 'Inter', sans-serif;
-        font-size: 1.6rem;
+        font-size: 1.65rem;
         font-weight: 700;
         letter-spacing: -0.035em;
         color: {text_primary} !important;
@@ -135,8 +170,8 @@ st.markdown(
     }}
     .org-subtitle {{
         font-family: 'Inter', sans-serif;
-        font-size: 0.825rem;
-        color: {text_muted} !important;
+        font-size: 0.85rem;
+        color: {text_secondary} !important;
         font-weight: 400;
         margin-top: 0.25rem;
         letter-spacing: -0.01em;
@@ -213,7 +248,7 @@ st.markdown(
         background: {tag_bg};
         border: 1px solid {tag_border};
         color: {tag_text} !important;
-        padding: 0.25rem 0.65rem;
+        padding: 0.3rem 0.7rem;
         border-radius: 9999px;
         transition: all 0.15s ease;
     }}
@@ -244,7 +279,7 @@ st.markdown(
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        color: {text_muted} !important;
+        color: {text_secondary} !important;
         margin-bottom: 0.45rem;
     }}
     .citation-item {{
@@ -268,11 +303,29 @@ st.markdown(
         margin-left: 0.35rem;
     }}
 
-    /* Sidebar Styling */
-    [data-testid="stSidebar"] {{
+    /* Sidebar Full Visibility & High Contrast */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebarContent"],
+    [data-testid="stSidebarUserContent"],
+    section[data-testid="stSidebar"] {{
         background-color: {bg_sidebar} !important;
         border-right: 1px solid {border_color} !important;
     }}
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] h4,
+    [data-testid="stSidebar"] strong,
+    [data-testid="stSidebar"] label {{
+        color: {text_primary} !important;
+        font-family: 'Inter', sans-serif !important;
+    }}
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] .stCaption {{
+        color: {text_secondary} !important;
+    }}
+
     .sidebar-doc-row {{
         display: flex;
         align-items: center;
@@ -287,6 +340,10 @@ st.markdown(
     }}
     .sidebar-doc-row:hover {{
         border-color: {border_hover};
+    }}
+    .sidebar-doc-row span {{
+        color: {text_primary} !important;
+        font-weight: 500;
     }}
     .doc-type-badge {{
         font-size: 0.65rem;
@@ -312,7 +369,7 @@ st.markdown(
         font-size: 0.675rem;
         text-transform: uppercase;
         font-weight: 700;
-        color: {text_muted} !important;
+        color: {text_secondary} !important;
         letter-spacing: 0.06em;
     }}
     .stat-value {{
@@ -324,6 +381,18 @@ st.markdown(
         margin-top: 0.2rem;
     }}
 
+    /* Selectbox Styling */
+    [data-testid="stSelectbox"] label {{
+        color: {text_primary} !important;
+        font-weight: 600 !important;
+    }}
+    [data-testid="stSelectbox"] > div > div {{
+        background-color: {bg_card} !important;
+        border: 1px solid {border_color} !important;
+        color: {text_primary} !important;
+        border-radius: 8px !important;
+    }}
+
     /* Chat Messages Styling */
     .stChatMessage {{
         background-color: {bg_card} !important;
@@ -332,6 +401,9 @@ st.markdown(
         padding: 1.1rem !important;
         margin-bottom: 0.85rem !important;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    }}
+    .stChatMessage p, .stChatMessage span {{
+        color: {text_primary} !important;
     }}
 
     /* Buttons */
