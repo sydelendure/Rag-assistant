@@ -41,33 +41,34 @@ if "dark_mode" not in st.session_state:
 
 is_dark = st.session_state.dark_mode
 
-# Theme Tokens #
+# Theme Tokens (Inspired by darkmodedesign.com) #
 if is_dark:
-    bg_app = "#141312"
-    bg_card = "#1C1B19"
-    bg_elevated = "#23211E"
-    bg_sidebar = "#181715"
-    text_primary = "#EAE5DC"
-    text_secondary = "#A8A095"
-    text_muted = "#736C62"
-    border_color = "#2E2B27"
-    accent_primary = "#E27D5B"
-    accent_hover = "#D46D4B"
-    badge_bg = "#282522"
-    badge_text = "#D6CEC2"
-    btn_bg = "#1F1D1B"
-    btn_border = "#332F2A"
-    btn_text = "#EAE5DC"
-    btn_hover_bg = "#282522"
-    tag_bg = "#23211E"
-    tag_border = "#332F2A"
-    tag_text = "#D6CEC2"
-    status_online_bg = "#132A1B"
+    bg_app = "#000000"
+    bg_card = "#0C0C0D"
+    bg_elevated = "#121316"
+    bg_sidebar = "#080809"
+    text_primary = "#FFFFFF"
+    text_secondary = "#9E9E9E"
+    text_muted = "#707070"
+    border_color = "rgba(255, 255, 255, 0.08)"
+    border_hover = "rgba(255, 255, 255, 0.22)"
+    accent_primary = "#FFFFFF"
+    accent_hover = "#E5E5E5"
+    badge_bg = "rgba(255, 255, 255, 0.06)"
+    badge_text = "#E0E0E0"
+    btn_bg = "#141517"
+    btn_border = "rgba(255, 255, 255, 0.12)"
+    btn_text = "#FFFFFF"
+    btn_hover_bg = "#1F2124"
+    tag_bg = "rgba(255, 255, 255, 0.04)"
+    tag_border = "rgba(255, 255, 255, 0.09)"
+    tag_text = "#CCCCCC"
+    status_online_bg = "rgba(34, 197, 94, 0.1)"
     status_online_text = "#4ADE80"
-    status_online_border = "#1E4A2B"
-    status_offline_bg = "#2F1512"
+    status_online_border = "rgba(34, 197, 94, 0.25)"
+    status_offline_bg = "rgba(239, 68, 68, 0.1)"
     status_offline_text = "#F87171"
-    status_offline_border = "#4F1E19"
+    status_offline_border = "rgba(239, 68, 68, 0.25)"
 else:
     bg_app = "#FAF8F5"
     bg_card = "#FFFFFF"
@@ -77,6 +78,7 @@ else:
     text_secondary = "#524E48"
     text_muted = "#736C64"
     border_color = "#E5DFD6"
+    border_hover = "#CC6B49"
     accent_primary = "#CC6B49"
     accent_hover = "#B85837"
     badge_bg = "#F0EAE1"
@@ -99,13 +101,15 @@ else:
 st.markdown(
     f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
     
-    /* Global Base */
+    /* Global Base & Typography */
     html, body, [class*="css"], .stApp {{
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         color: {text_primary} !important;
         background-color: {bg_app} !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }}
 
     /* Top Navigation / App Banner */
@@ -113,7 +117,7 @@ st.markdown(
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 0 1.25rem 0;
+        padding: 0.85rem 0 1.25rem 0;
         border-bottom: 1px solid {border_color};
         margin-bottom: 1.5rem;
     }}
@@ -122,20 +126,20 @@ st.markdown(
         flex-direction: column;
     }}
     .org-title {{
-        font-family: 'Source Serif 4', 'Newsreader', Georgia, serif;
-        font-size: 1.55rem;
-        font-weight: 600;
-        letter-spacing: -0.02em;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.035em;
         color: {text_primary} !important;
         margin: 0;
     }}
     .org-subtitle {{
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.8125rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.825rem;
         color: {text_muted} !important;
-        font-weight: 500;
-        margin-top: 0.2rem;
-        letter-spacing: 0.01em;
+        font-weight: 400;
+        margin-top: 0.25rem;
+        letter-spacing: -0.01em;
     }}
 
     /* Status Indicators */
@@ -144,10 +148,11 @@ st.markdown(
         align-items: center;
         gap: 0.45rem;
         padding: 0.35rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.725rem;
         font-weight: 600;
         font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 0.02em;
     }}
     .status-online {{
         background-color: {status_online_bg};
@@ -165,29 +170,34 @@ st.markdown(
         border-radius: 50%;
         display: inline-block;
     }}
-    .dot-green {{ background-color: #2EA857; }}
-    .dot-red {{ background-color: #D63923; }}
+    .dot-green {{ background-color: #22C55E; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }}
+    .dot-red {{ background-color: #EF4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }}
 
-    /* Anthropic Warm Editorial Hero Panel */
+    /* Dark Mode Design Hero Panel */
     .hero-panel {{
         background: {bg_elevated};
         border: 1px solid {border_color};
-        border-radius: 10px;
-        padding: 1.5rem 1.75rem;
+        border-radius: 12px;
+        padding: 1.6rem 1.85rem;
         margin-bottom: 1.5rem;
+        transition: border-color 0.2s ease;
+    }}
+    .hero-panel:hover {{
+        border-color: {border_hover};
     }}
     .hero-headline {{
-        font-family: 'Source Serif 4', 'Newsreader', Georgia, serif;
-        font-size: 1.35rem;
-        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
         color: {text_primary} !important;
-        letter-spacing: -0.015em;
+        letter-spacing: -0.03em;
         margin-bottom: 0.4rem;
     }}
     .hero-copy {{
-        font-size: 0.9rem;
+        font-size: 0.925rem;
         color: {text_secondary} !important;
-        line-height: 1.6;
+        line-height: 1.65;
+        letter-spacing: -0.01em;
     }}
 
     /* Policy Category Tags */
@@ -203,44 +213,49 @@ st.markdown(
         background: {tag_bg};
         border: 1px solid {tag_border};
         color: {tag_text} !important;
-        padding: 0.25rem 0.6rem;
-        border-radius: 5px;
+        padding: 0.25rem 0.65rem;
+        border-radius: 9999px;
+        transition: all 0.15s ease;
+    }}
+    .category-tag:hover {{
+        border-color: {border_hover};
+        color: {text_primary} !important;
     }}
 
     /* Section Subheadings */
     h1, h2, h3, h4, h5, h6, .stSubheader {{
-        font-family: 'Source Serif 4', 'Newsreader', Georgia, serif !important;
+        font-family: 'Inter', sans-serif !important;
         color: {text_primary} !important;
-        font-weight: 600 !important;
-        letter-spacing: -0.015em !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.03em !important;
     }}
 
     /* Source Citation Footnotes */
     .citations-card {{
         margin-top: 0.85rem;
-        padding: 0.75rem 1rem;
+        padding: 0.85rem 1rem;
         background: {bg_card};
         border: 1px solid {border_color};
         border-left: 3px solid {accent_primary};
-        border-radius: 6px;
+        border-radius: 8px;
     }}
     .citations-header {{
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         color: {text_muted} !important;
         margin-bottom: 0.45rem;
     }}
     .citation-item {{
         display: inline-flex;
         align-items: center;
-        font-size: 0.8125rem;
+        font-size: 0.8rem;
         color: {text_primary} !important;
         background: {bg_elevated};
         border: 1px solid {border_color};
-        padding: 0.25rem 0.6rem;
-        border-radius: 4px;
+        padding: 0.25rem 0.65rem;
+        border-radius: 6px;
         margin: 0.15rem 0.35rem 0.15rem 0;
         font-family: 'JetBrains Mono', monospace;
     }}
@@ -262,51 +277,61 @@ st.markdown(
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.45rem 0.65rem;
+        padding: 0.5rem 0.75rem;
         background: {bg_card};
         border: 1px solid {border_color};
-        border-radius: 5px;
-        margin-bottom: 0.35rem;
-        font-size: 0.8rem;
+        border-radius: 8px;
+        margin-bottom: 0.4rem;
+        font-size: 0.825rem;
+        transition: border-color 0.15s ease;
+    }}
+    .sidebar-doc-row:hover {{
+        border-color: {border_hover};
     }}
     .doc-type-badge {{
         font-size: 0.65rem;
         font-family: 'JetBrains Mono', monospace;
         background: {badge_bg};
         color: {badge_text} !important;
-        padding: 0.15rem 0.35rem;
-        border-radius: 3px;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
         font-weight: 600;
     }}
     .stat-box {{
         background: {bg_card};
         border: 1px solid {border_color};
-        border-radius: 6px;
-        padding: 0.75rem;
+        border-radius: 8px;
+        padding: 0.85rem;
         margin-bottom: 0.75rem;
+        transition: border-color 0.15s ease;
+    }}
+    .stat-box:hover {{
+        border-color: {border_hover};
     }}
     .stat-label {{
-        font-size: 0.7rem;
+        font-size: 0.675rem;
         text-transform: uppercase;
-        font-weight: 600;
+        font-weight: 700;
         color: {text_muted} !important;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
     }}
     .stat-value {{
-        font-family: 'Source Serif 4', serif;
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
         color: {text_primary} !important;
-        margin-top: 0.15rem;
+        margin-top: 0.2rem;
     }}
 
     /* Chat Messages Styling */
     .stChatMessage {{
         background-color: {bg_card} !important;
         border: 1px solid {border_color} !important;
-        border-radius: 8px !important;
-        padding: 1rem !important;
-        margin-bottom: 0.75rem !important;
+        border-radius: 12px !important;
+        padding: 1.1rem !important;
+        margin-bottom: 0.85rem !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
     }}
 
     /* Buttons */
@@ -314,25 +339,27 @@ st.markdown(
         background-color: {btn_bg} !important;
         border: 1px solid {btn_border} !important;
         color: {btn_text} !important;
-        border-radius: 6px;
+        border-radius: 8px;
         font-weight: 500;
         font-size: 0.875rem;
+        letter-spacing: -0.01em;
         transition: all 0.15s ease-in-out;
     }}
     div.stButton > button:hover {{
         background-color: {btn_hover_bg} !important;
-        border-color: {accent_primary} !important;
-        color: {accent_primary} !important;
+        border-color: {border_hover} !important;
+        color: {text_primary} !important;
     }}
     div.stButton > button[kind="primary"] {{
-        background-color: {accent_primary} !important;
-        border: 1px solid {accent_primary} !important;
-        color: #FFFFFF !important;
+        background-color: {'#FFFFFF' if is_dark else '#CC6B49'} !important;
+        border: 1px solid {'#FFFFFF' if is_dark else '#B25232'} !important;
+        color: {'#000000' if is_dark else '#FFFFFF'} !important;
+        font-weight: 600 !important;
     }}
     div.stButton > button[kind="primary"]:hover {{
-        background-color: {accent_hover} !important;
-        border-color: {accent_hover} !important;
-        color: #FFFFFF !important;
+        background-color: {'#E5E5E5' if is_dark else '#B85837'} !important;
+        border-color: {'#E5E5E5' if is_dark else '#9E4628'} !important;
+        color: {'#000000' if is_dark else '#FFFFFF'} !important;
     }}
     </style>
     """,
