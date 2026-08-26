@@ -289,7 +289,6 @@ def get_rag_services():
                     os.environ[k] = str(st.secrets[k])
     except Exception:
         pass
-
     from app.retrieval.retriever import Retriever
     from app.generation.generator import Generator
     retriever = Retriever()

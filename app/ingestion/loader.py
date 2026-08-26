@@ -229,7 +229,7 @@ def load_image_pages(file_path: str) -> List[Dict[str, Any]]:
         annotations = ocrmac.OCR(str(img_path)).recognize()
         extracted_lines = [text.strip() for text, conf, bbox in annotations if text.strip()]
     except Exception:
-        # 2. Fallback to pytesseract or PIL if available
+        # 2. Fallback to pytesseract 
         try:
             import pytesseract
             from PIL import Image
